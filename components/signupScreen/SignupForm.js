@@ -34,6 +34,10 @@ const SignupForm = ({ navigation }) => {
         .createUserWithEmailAndPassword(email, password);
 
       console.log('Firebas user created successfully');
+      const user = firebase.auth().currentUser;
+      const displayname = username;
+      const photoURL = profileAvatar;
+
       db.collection('users').doc(authUser.user.email).set({
         owner_uid: authUser.user.uid,
         username: username,

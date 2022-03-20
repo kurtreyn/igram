@@ -8,7 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 
 export default function App() {
   const user = firebase.auth().currentUser;
-  // console.log(user);
+  console.log(user);
 
   if (user !== null) {
     const displayName = user.displayName;
@@ -18,7 +18,7 @@ export default function App() {
     const uid = user.uid;
   }
 
-  console.log(user.email);
+  console.log(user.displayName);
 
   return (
     <View style={styles.container}>
