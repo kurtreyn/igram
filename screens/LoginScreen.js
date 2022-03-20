@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-// import LoginForm from '../components/loginScreen/LoginForm';
+import LoginForm from '../components/loginScreen/LoginForm';
 
 // import IG_LOGO from '../assets/instagram-logo.png';
 
@@ -12,7 +12,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.logoContainer}>
         {/* <Image source={{ uri: instagramLogo, height: 100, width: 100 }} /> */}
       </View>
-      {/* <LoginForm navigation={navigation} /> */}
+      <LoginForm navigation={navigation} />
     </View>
   );
 };
