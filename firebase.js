@@ -1,6 +1,4 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
+import firebase from 'firebase';
 import { API_URL, API_TOKEN } from '@env';
 
 const firebaseConfig = {
@@ -12,6 +10,7 @@ const firebaseConfig = {
   appId: process.env.APP_ID,
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth();
-export const storage = getStorage();
+!firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
+const db = firebase.firestore();
+
+export { firebase, db };

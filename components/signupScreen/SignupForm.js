@@ -11,8 +11,7 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Validator from 'email-validator';
-import { auth } from '../../firebase';
-import { createUserWithEmailAndPassword } from '../../firebase';
+import { firebase, db } from '../../firebase';
 
 const SignupForm = ({ navigation }) => {
   const signupFormSchema = Yup.object().shape({
@@ -23,17 +22,24 @@ const SignupForm = ({ navigation }) => {
       .min(6, 'Your password has to have at least 8 characters'),
   });
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userName, setUserName] = useState('');
-
-  function signupUser(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
-  }
+  // const getRandomProfilePicture = async () => {
+  //   const response = await fetch('https://randomuser.me/api');
+  //   const data = await response.json();
+  //   return data.results[0].picture.large;
+  // };
 
   const onSignup = async (email, username, password) => {
     try {
-      await signupUser(email, password);
+      const authUser = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+      console.log('Firebas user created successfully');
+      db.collection('users').doc(authUser.user.email).set({
+        owner_uid: authUser.user.uid,
+        username: username,
+        email: authUser.user.email,
+        profile_picture: authUser.user.profile_picture,
+      });
     } catch (error) {
       Alert.alert('Uh oh...', error.message);
     }
@@ -44,10 +50,7 @@ const SignupForm = ({ navigation }) => {
       <Formik
         initialValues={{ email: '', username: '', password: '' }}
         onSubmit={(values) => {
-          setEmail(values.email);
-          setPassword(values.password);
-          setUserName(values.username);
-          onSignup(email, password, userName);
+          onSignup(values.email, values.username, values.password);
           console.log(values.email, values.username, values.password);
         }}
         validationSchema={signupFormSchema}
