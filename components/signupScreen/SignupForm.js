@@ -15,7 +15,6 @@ import Validator from 'email-validator';
 import { firebase, db } from '../../firebase';
 
 import BLANK_PROFILE_PIC from '../../assets/profile-avatar.png';
-
 const profileAvatar = Image.resolveAssetSource(BLANK_PROFILE_PIC).uri;
 
 const SignupForm = ({ navigation }) => {
@@ -32,17 +31,13 @@ const SignupForm = ({ navigation }) => {
       const authUser = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password);
-
       console.log('Firebas user created successfully');
-      const user = firebase.auth().currentUser;
-      const displayname = username;
-      const photoURL = profileAvatar;
-
       db.collection('users').doc(authUser.user.email).set({
         owner_uid: authUser.user.uid,
         username: username,
         email: authUser.user.email,
         profile_picture: profileAvatar,
+        photoURL: profileAvatar,
       });
     } catch (error) {
       Alert.alert('Uh oh...', error.message);
@@ -55,7 +50,6 @@ const SignupForm = ({ navigation }) => {
         initialValues={{ email: '', username: '', password: '' }}
         onSubmit={(values) => {
           onSignup(values.email, values.username, values.password);
-          console.log(values.email, values.username, values.password);
         }}
         validationSchema={signupFormSchema}
         validateOnMount={true}

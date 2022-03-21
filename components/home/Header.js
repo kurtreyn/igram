@@ -7,6 +7,13 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import PLUS_ICON from '../../assets/icon-plus-2-math.png';
+import HEART_ICON from '../../assets/icons8-heart-50.png';
+import MESSANGER_ICON from '../../assets/icon-facebook-messenger.png';
+
+const plusIcon = Image.resolveAssetSource(PLUS_ICON).uri;
+const heartIcon = Image.resolveAssetSource(HEART_ICON).uri;
+const messangerIcon = Image.resolveAssetSource(MESSANGER_ICON).uri;
 
 const Header = ({ navigation }) => {
   return (
@@ -25,10 +32,10 @@ const Header = ({ navigation }) => {
           ])
         }
       >
-        {/* <Image
+        <Image
           style={styles.logo}
           source={require('../../assets/header-logo.png')}
-        /> */}
+        />
       </TouchableOpacity>
 
       <View style={styles.iconsContainer}>
@@ -46,31 +53,31 @@ const Header = ({ navigation }) => {
             ])
           }
         >
-          {/* <Image
+          <Image
             source={{
-              uri: 'https://img.icons8.com/fluency-systems-regular/60/ffffff/plus-2-math.png',
+              uri: plusIcon,
             }}
             style={styles.icon}
-          /> */}
+          />
         </TouchableOpacity>
         <TouchableOpacity>
-          {/* <Image
+          <Image
             source={{
-              uri: 'https://img.icons8.com/fluency-systems-regular/60/ffffff/like--v1.png',
+              uri: heartIcon,
             }}
             style={styles.icon}
-          /> */}
+          />
         </TouchableOpacity>
         <TouchableOpacity>
           <View style={styles.unreadBadge}>
             <Text style={styles.unreadBadgeText}>11</Text>
           </View>
-          {/* <Image
+          <Image
             source={{
-              uri: 'https://img.icons8.com/fluency-systems-regular/60/ffffff/facebook-messenger.png',
+              uri: messangerIcon,
             }}
             style={styles.icon}
-          /> */}
+          />
         </TouchableOpacity>
       </View>
     </View>

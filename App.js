@@ -9,9 +9,11 @@ import LoginScreen from './screens/LoginScreen';
 import TEMP_PROFILE_PIC from './assets/profile-avatar.png';
 const tempProfilePic = Image.resolveAssetSource(TEMP_PROFILE_PIC).uri;
 
+import KURT_PROFILE_PIC from './assets/kr-profile.jpg';
+const kurtProfilePic = Image.resolveAssetSource(KURT_PROFILE_PIC).uri;
+
 export default function App() {
   const user = firebase.auth().currentUser;
-  const usersCollectionRef = db.collectionGroup('users');
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -24,26 +26,27 @@ export default function App() {
     }
   });
 
-  function updateProfile() {
-    user
-      .updateProfile({
-        displayName: 'USER NAME',
-        photoURL: tempProfilePic,
-      })
-      .then(() => {
-        console.log('update successful');
-        console.log(
-          `-----NEW displayName: ${user.displayName}, photoURL: ${user.photoURL}`
-        );
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  }
+  // THIS WORKS
+  // function updateProfile() {
+  //   user
+  //     .updateProfile({
+  //       displayName: 'Kurt',
+  //       photoURL: kurtProfilePic,
+  //     })
+  //     .then(() => {
+  //       console.log('update successful');
+  //       console.log(
+  //         `-----NEW displayName: ${user.displayName}, photoURL: ${user.photoURL}`
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.message);
+  //     });
+  // }
 
-  useEffect(() => {
-    updateProfile();
-  });
+  // useEffect(() => {
+  //   updateProfile();
+  // }, []);
 
   return (
     <View style={styles.container}>

@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import { firebase, db } from '../../firebase';
+import React from 'react';
+import { StyleSheet, Text, View, Image } from 'react-native';
 
-import { Divider } from 'react-native-elements';
-
-const Post = ({ post }) => {
+const PostImage = ({ post }) => {
   return (
-    <View style={{ marginBottom: 30 }}>
-      <Divider width={1} orientation="vertical" />
-      <Text style={{ color: 'white' }}>POSTS</Text>
+    <View style={styles.postImageContainer} key={post.id}>
+      <Image source={{ uri: post.imageUrl }} style={styles.postImage} />
     </View>
   );
 };
 
-export default Post;
+export default PostImage;
 
 const styles = StyleSheet.create({
   postHeader: {
