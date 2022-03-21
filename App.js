@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { firebase, db } from './firebase';
-import HomeScreen from './screens/HomeScreen';
-import SignupScreen from './screens/SignupScreen';
-import LoginScreen from './screens/LoginScreen';
-// import AuthNavigation from './AuthNavigation';
-
-import TEMP_PROFILE_PIC from './assets/profile-avatar.png';
-const tempProfilePic = Image.resolveAssetSource(TEMP_PROFILE_PIC).uri;
+import AuthNavigation from './AuthNavigation';
 
 import KURT_PROFILE_PIC from './assets/kr-profile.jpg';
 const kurtProfilePic = Image.resolveAssetSource(KURT_PROFILE_PIC).uri;
@@ -50,9 +44,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <HomeScreen />
-      {/* <SignupScreen /> */}
-      {/* <LoginScreen /> */}
+      <AuthNavigation />
     </View>
   );
 }

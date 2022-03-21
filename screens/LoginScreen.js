@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import LoginForm from '../components/loginScreen/LoginForm';
 
 import IG_LOGO from '../assets/instagram-logo.png';
-
 const instagramLogo = Image.resolveAssetSource(IG_LOGO).uri;
 
 const LoginScreen = ({ navigation }) => {

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { firebase } from '../../firebase';
 import PLUS_ICON from '../../assets/icon-plus-2-math.png';
 import HEART_ICON from '../../assets/icons8-heart-50.png';
 import MESSANGER_ICON from '../../assets/icon-facebook-messenger.png';
@@ -16,6 +17,15 @@ const heartIcon = Image.resolveAssetSource(HEART_ICON).uri;
 const messangerIcon = Image.resolveAssetSource(MESSANGER_ICON).uri;
 
 const Header = ({ navigation }) => {
+  const handleSignout = async () => {
+    try {
+      await firebase.auth().signOut();
+      console.log('Signed out successfully');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -48,7 +58,7 @@ const Header = ({ navigation }) => {
               },
               {
                 text: 'Upload Picture from Gallery',
-                onPress: () => navigation.push('CameraGallery'),
+                onPress: () => navigation.push('Gallery'),
               },
             ])
           }
