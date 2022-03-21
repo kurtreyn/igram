@@ -5,14 +5,17 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import { firebase, db } from '../../firebase';
+import { firebase, storage } from '../../firebase';
+import 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery() {
   const [image, setImage] = useState(null);
+  const storage = firebase.storage();
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
 
   const pickImage = async () => {
@@ -30,45 +33,19 @@ export default function Gallery() {
   };
   console.log(`image is: ${image}`);
 
-  const uploadPostToFirebase = (image) => {
-    const unsubscribe = db
-      .collection('users')
-      .doc(firebase.auth().currentUser.email)
-      .collection('posts')
-      .add({
-        imageUrl: image,
-        user: firebase.auth().username,
-        profile_picture: firebase.auth().photoURL,
-        owner_uid: firebase.auth().currentUser.uid,
-        owner_email: firebase.auth().currentUser.email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        likes_by_users: [],
-        comments: [],
-      })
-      .then(() => navigation.goBack());
-    return unsubscribe;
-  };
+  function uploadFile(image) {
+    const ref = firebase.storage().ref().child('image');
 
-  const getUserName = () => {
-    const user = firebase.auth().currentUser;
-    const unsubscribe = db
-      .collection('users')
-      .where('owner_uid', '==', user.uid)
-      .limit(1)
-      .onSnapshot((snapshot) =>
-        snapshot.docs.map((doc) => {
-          setCurrentLoggedInUser({
-            username: doc.data().username,
-            profilePicture: doc.data().profile_picture,
-          });
-        })
-      );
-    return unsubscribe;
-  };
-
-  useEffect(() => {
-    getUserName();
-  }, []);
+    try {
+      ref.put(image).then((snapshot) => {
+        console.log(snapshot);
+        console.log('Uploaded a blob or file!');
+      });
+    } catch (error) {
+      console.log(error);
+      console.log(error.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -91,7 +68,7 @@ export default function Gallery() {
               source={{ uri: image }}
               style={{ width: 200, height: 200 }}
             />
-            <Button title="Upload Image" onPress={uploadPostToFirebase} />
+            <Button title="Upload Image" onPress={uploadFile} />
           </View>
         )}
       </View>
