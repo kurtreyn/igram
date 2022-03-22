@@ -9,20 +9,19 @@ import {
   Text,
   Pressable,
 } from 'react-native';
-import { firebase, storage } from '../../firebase';
+import { firebase, db, storage } from '../../firebase';
 import 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
-export default function Gallery() {
+export default function Gallery({ navigation }) {
   const [image, setImage] = useState(null);
-  const storage = firebase.storage();
-  const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [fileUrl, setFileUrl] = useState(null);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -32,36 +31,30 @@ export default function Gallery() {
 
     if (!result.cancelled) {
       setImage(result.uri);
+      setImageUrl(result.uri);
     }
   };
-  console.log(`image is: ${image}`);
 
   const postImage = async () => {
+    const uploadUri = image;
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+    setLoading(true);
     try {
-      const file = image;
-      const storageRef = firebase.app().storage().ref();
-      const fileRef = storageRef.child(JSON.stringify(image));
-      await fileRef.put(file);
-      setFileUrl(await fileRef.getDownloadURL());
-      Alert.alert('Post successful');
+      await storage.ref(filename).put(uploadUri);
+      storage
+        .ref(filename)
+        .getDownloadURL()
+        .then((url) => {
+          setFileUrl(url);
+        });
+      Alert.alert('Post was successful');
     } catch (error) {
-      console.log(error);
+      Alert.alert('Error', error.message);
     }
+    setLoading(false);
   };
 
-  // function postImage(file) {
-  //   const ref = firebase.storage().ref().child(image);
-
-  //   try {
-  //     ref.put(file).then((snapshot) => {
-  //       console.log(snapshot);
-  //       console.log('Uploaded a blob or file!');
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     console.log(error.message);
-  //   }
-  // }
+  console.log(`fileUrl: ${fileUrl}`);
 
   return (
     <View style={styles.container}>
