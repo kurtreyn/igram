@@ -17,13 +17,15 @@ const HomeScreen = ({ navigation }) => {
     });
   }, []);
 
+  // console.log(`POST FROM HOMESCREEN: ${posts}`);
+
   return (
     <SafeAreaView style={styles.container}>
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
         {posts.map((post, index) => {
-          <Post post={post} index={index} />;
+          <Post post={post} key={index} />;
         })}
       </ScrollView>
       <BottomTabs icons={bottomTabIcons} posts={posts} />

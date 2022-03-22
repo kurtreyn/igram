@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { firebase, db } from '../../firebase';
 import { Divider } from 'react-native-elements';
 import PostHeader from './PostHeader';
@@ -12,30 +12,31 @@ import Comments from './Comments';
 import { postFooterIcons } from '../../shared/postFooterIcons';
 
 const Post = ({ post }) => {
-  // const handleLike = (post) => {
-  //   const currentLikeStatus = !post.likes_by_users.includes(
-  //     firebase.auth().currentUser.email
-  //   );
-  //   db.collection('users')
-  //     .doc(post.owner_email)
-  //     .collection('posts')
-  //     .doc(post.id)
-  //     .update({
-  //       likes_by_users: currentLikeStatus
-  //         ? firebase.firestore.FieldValue.arrayUnion(
-  //             firebase.auth().currentUser.email
-  //           )
-  //         : firebase.firestore.FieldValue.arrayRemove(
-  //             firebase.auth().currentUser.email
-  //           ),
-  //     })
-  //     .then(() => {
-  //       console.log('Document successfully updated');
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error updating document: ', error);
-  //     });
-  // };
+  console.log(`POST FROM POST: ${post}`);
+  const handleLike = (post) => {
+    const currentLikeStatus = !post.likes_by_users.includes(
+      firebase.auth().currentUser.email
+    );
+    db.collection('users')
+      .doc(post.owner_email)
+      .collection('posts')
+      .doc(post.id)
+      .update({
+        likes_by_users: currentLikeStatus
+          ? firebase.firestore.FieldValue.arrayUnion(
+              firebase.auth().currentUser.email
+            )
+          : firebase.firestore.FieldValue.arrayRemove(
+              firebase.auth().currentUser.email
+            ),
+      })
+      .then(() => {
+        console.log('Document successfully updated');
+      })
+      .catch((error) => {
+        console.error('Error updating document: ', error);
+      });
+  };
 
   return (
     <View style={{ marginBottom: 30 }}>

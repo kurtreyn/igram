@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Text,
+  Pressable,
 } from 'react-native';
 import { firebase, storage } from '../../firebase';
 import 'firebase/storage';
@@ -17,6 +19,7 @@ export default function Gallery() {
   const [image, setImage] = useState(null);
   const storage = firebase.storage();
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -33,19 +36,32 @@ export default function Gallery() {
   };
   console.log(`image is: ${image}`);
 
-  function uploadFile(image) {
-    const ref = firebase.storage().ref().child('image');
-
+  const postImage = async () => {
     try {
-      ref.put(image).then((snapshot) => {
-        console.log(snapshot);
-        console.log('Uploaded a blob or file!');
-      });
+      const file = image;
+      const storageRef = firebase.app().storage().ref();
+      const fileRef = storageRef.child(JSON.stringify(image));
+      await fileRef.put(file);
+      setFileUrl(await fileRef.getDownloadURL());
+      Alert.alert('Post successful');
     } catch (error) {
       console.log(error);
-      console.log(error.message);
     }
-  }
+  };
+
+  // function postImage(file) {
+  //   const ref = firebase.storage().ref().child(image);
+
+  //   try {
+  //     ref.put(file).then((snapshot) => {
+  //       console.log(snapshot);
+  //       console.log('Uploaded a blob or file!');
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     console.log(error.message);
+  //   }
+  // }
 
   return (
     <View style={styles.container}>
@@ -68,7 +84,9 @@ export default function Gallery() {
               source={{ uri: image }}
               style={{ width: 200, height: 200 }}
             />
-            <Button title="Upload Image" onPress={uploadFile} />
+            <Pressable style={styles.button} onPress={postImage}>
+              <Text style={styles.text}>Post</Text>
+            </Pressable>
           </View>
         )}
       </View>
@@ -93,5 +111,21 @@ const styles = StyleSheet.create({
   bodyContainer: {
     flex: 1,
     marginTop: 200,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'lightblue',
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
   },
 });
