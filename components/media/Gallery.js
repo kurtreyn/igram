@@ -18,10 +18,9 @@ import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({ navigation }) {
-  const [image, setImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fileUrl, setFileUrl] = useState(null);
+
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   // const user = firebase.auth().currentUser;
@@ -59,43 +58,17 @@ export default function Gallery({ navigation }) {
     });
 
     if (!result.cancelled) {
-      // setImage(result.uri);
       // console.log(`result uri: ${result.uri}`);
       setImageUrl(result.uri);
-      // saveImage(imageUrl)
-      //   .then(() => {
-      //     Alert.alert('Post was successful');
-      //   })
-      //   .catch((error) => {
-      //     Alert.alert(error);
-      //   });
     }
   };
 
   // console.log(`imageUrl is: ${imageUrl}`);
 
-  // const saveImage = async () => {
-  //   const uploadUri = imageUrl;
-  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-  //   setLoading(true);
-  //   try {
-  //     await storage.ref(filename).put(uploadUri);
-  //     storage
-  //       .ref(filename)
-  //       .getDownloadURL()
-  //       .then((url) => {
-  //         postImage(url + filename, caption);
-  //       });
-  //     Alert.alert('Post was successful');
-  //   } catch (error) {
-  //     Alert.alert('Error', error.message);
-  //   }
-  //   setLoading(false);
-  // };
-
   const saveImage = async (uri) => {
     let filename = uri.substring(uri.lastIndexOf('/') + 1);
-    console.log(`filename is: ${filename}`);
+    // console.log(`filename is: ${filename}`);
+    setLoading(true);
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -103,16 +76,24 @@ export default function Gallery({ navigation }) {
         .storage()
         .ref()
         .child('images/' + filename);
-      console.log(`blob is: ${blob}`);
-      console.log(`ref is: ${ref}`);
+      storage
+        .ref('images/' + filename)
+        .getDownloadURL()
+        .then((url) => {
+          postImage(url + filename, caption);
+        });
+      // console.log(`blob is: ${blob}`);
+      // console.log(`ref is: ${ref}`);
       ref.put(blob);
       Alert.alert('Post was successful');
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      Alert.alert(error.message);
     }
   };
 
-  const postImage = (img, caption) => {
+  const postImage = async (img, caption) => {
     const unsubscribe = db
       .collection('users')
       .doc(firebase.auth().currentUser.email)
