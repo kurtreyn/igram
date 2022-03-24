@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
 const PostImage = ({ post }) => {
-  console.log(`POST FROM PostImage: ${post}`);
+  // console.log(`POST FROM PostImage: ${post}`);
   return (
     <View style={styles.postImageContainer} key={post.id}>
       <Image source={{ uri: post.imageUrl }} style={styles.postImage} />
