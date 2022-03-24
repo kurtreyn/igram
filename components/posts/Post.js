@@ -12,7 +12,6 @@ import Comments from './Comments';
 import { postFooterIcons } from '../../shared/postFooterIcons';
 
 const Post = ({ post }) => {
-  console.log(`POST FROM POST: ${post}`);
   const handleLike = (post) => {
     const currentLikeStatus = !post.likes_by_users.includes(
       firebase.auth().currentUser.email

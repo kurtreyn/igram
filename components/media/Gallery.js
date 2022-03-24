@@ -20,6 +20,7 @@ export default function Gallery({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fileUrl, setFileUrl] = useState(null);
+  const user = firebase.auth().currentUser;
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -52,9 +53,30 @@ export default function Gallery({ navigation }) {
       Alert.alert('Error', error.message);
     }
     setLoading(false);
+    uploadPostToFirebase(fileUrl, caption);
   };
 
   console.log(`fileUrl: ${fileUrl}`);
+
+  const uploadPostToFirebase = (imageUrl, caption) => {
+    const unsubscribe = db
+      .collection('users')
+      .doc(firebase.auth().currentUser.email)
+      .collection('posts')
+      .add({
+        imageUrl: imageUrl,
+        user: currentLoggedInUser.username,
+        profile_picture: currentLoggedInUser.profilePicture,
+        owner_uid: firebase.auth().currentUser.uid,
+        owner_email: firebase.auth().currentUser.email,
+        caption: caption,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        likes_by_users: [],
+        comments: [],
+      })
+      .then(() => navigation.goBack());
+    return unsubscribe;
+  };
 
   return (
     <View style={styles.container}>
@@ -77,9 +99,9 @@ export default function Gallery({ navigation }) {
               source={{ uri: image }}
               style={{ width: 200, height: 200 }}
             />
-            <Pressable style={styles.button} onPress={postImage}>
+            <TouchableOpacity style={styles.button} onPress={postImage}>
               <Text style={styles.text}>Post</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         )}
       </View>
