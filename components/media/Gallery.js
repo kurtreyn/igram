@@ -19,7 +19,7 @@ const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({ navigation }) {
   const [image, setImage] = useState(null);
-  // const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fileUrl, setFileUrl] = useState(null);
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
@@ -59,34 +59,45 @@ export default function Gallery({ navigation }) {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
-      setImageUrl(result.uri);
-    }
-  };
-
-  const postImage = async () => {
-    const uploadUri = image;
-    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-    setLoading(true);
-    try {
-      await storage.ref(filename).put(uploadUri);
-      storage
-        .ref(filename)
-        .getDownloadURL()
-        .then((url) => {
-          uploadPostToFirebase(url, caption);
+      // setImage(result.uri);
+      // setImageUrl(result.uri);
+      saveImage(result.uri)
+        .then(() => {
+          Alert.alert('Post was successful');
+        })
+        .catch((error) => {
+          Alert.alert(error);
         });
-
-      Alert.alert('Post was successful');
-    } catch (error) {
-      Alert.alert('Error', error.message);
     }
-    setLoading(false);
   };
 
-  console.log(`fileUrl: ${fileUrl}`);
+  // const saveImage = async () => {
+  //   const uploadUri = imageUrl;
+  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+  //   setLoading(true);
+  //   try {
+  //     await storage.ref(filename).put(uploadUri);
+  //     storage
+  //       .ref(filename)
+  //       .getDownloadURL()
+  //       .then((url) => {
+  //         postImage(url + filename, caption);
+  //       });
+  //     Alert.alert('Post was successful');
+  //   } catch (error) {
+  //     Alert.alert('Error', error.message);
+  //   }
+  //   setLoading(false);
+  // };
 
-  const uploadPostToFirebase = (img, caption) => {
+  const saveImage = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const ref = firebase.storage().ref().child('images/');
+    return await ref.put(blob);
+  };
+
+  const postImage = (img, caption) => {
     const unsubscribe = db
       .collection('users')
       .doc(firebase.auth().currentUser.email)
@@ -107,19 +118,19 @@ export default function Gallery({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={{
-              uri: backArrowIcon,
-            }}
-            style={{ width: 30, height: 30 }}
-          />
-        </TouchableOpacity>
-      </View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={{
+                uri: backArrowIcon,
+              }}
+              style={{ width: 30, height: 30 }}
+            />
+          </TouchableOpacity>
+        </View>
 
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.bodyContainer}>
           <Button title="Pick an image from camera roll" onPress={pickImage} />
           {image && (
@@ -135,14 +146,14 @@ export default function Gallery({ navigation }) {
                 multiline={true}
                 onChange={(e) => setCaption(e.nativeEvent.text)}
               />
-              <TouchableOpacity style={styles.button} onPress={postImage}>
+              <TouchableOpacity style={styles.button} onPress={saveImage}>
                 <Text style={styles.text}>Post</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
-      </TouchableWithoutFeedback>
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
