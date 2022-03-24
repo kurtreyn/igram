@@ -27,7 +27,7 @@ export default function Gallery({ navigation }) {
   // const user = firebase.auth().currentUser;
 
   // console.log(currentLoggedInUser);
-  console.log(caption);
+  // console.log(caption);
 
   const getUserName = () => {
     const user = firebase.auth().currentUser;
@@ -72,7 +72,7 @@ export default function Gallery({ navigation }) {
     }
   };
 
-  console.log(`imageUrl is: ${imageUrl}`);
+  // console.log(`imageUrl is: ${imageUrl}`);
 
   // const saveImage = async () => {
   //   const uploadUri = imageUrl;
@@ -94,11 +94,15 @@ export default function Gallery({ navigation }) {
   // };
 
   const saveImage = async (uri) => {
-    // imageName = uri.substring(uri.lastIndexOf('/' + 1));
+    let filename = uri.substring(uri.lastIndexOf('/') + 1);
+    console.log(`filename is: ${filename}`);
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
-      const ref = firebase.storage().ref().child('images/');
+      const ref = firebase
+        .storage()
+        .ref()
+        .child('images/' + filename);
       console.log(`blob is: ${blob}`);
       console.log(`ref is: ${ref}`);
       ref.put(blob);
