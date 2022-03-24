@@ -60,16 +60,19 @@ export default function Gallery({ navigation }) {
 
     if (!result.cancelled) {
       // setImage(result.uri);
-      // setImageUrl(result.uri);
-      saveImage(result.uri)
-        .then(() => {
-          Alert.alert('Post was successful');
-        })
-        .catch((error) => {
-          Alert.alert(error);
-        });
+      // console.log(`result uri: ${result.uri}`);
+      setImageUrl(result.uri);
+      // saveImage(imageUrl)
+      //   .then(() => {
+      //     Alert.alert('Post was successful');
+      //   })
+      //   .catch((error) => {
+      //     Alert.alert(error);
+      //   });
     }
   };
+
+  console.log(`imageUrl is: ${imageUrl}`);
 
   // const saveImage = async () => {
   //   const uploadUri = imageUrl;
@@ -91,10 +94,18 @@ export default function Gallery({ navigation }) {
   // };
 
   const saveImage = async (uri) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const ref = firebase.storage().ref().child('images/');
-    return await ref.put(blob);
+    // imageName = uri.substring(uri.lastIndexOf('/' + 1));
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const ref = firebase.storage().ref().child('images/');
+      console.log(`blob is: ${blob}`);
+      console.log(`ref is: ${ref}`);
+      ref.put(blob);
+      Alert.alert('Post was successful');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const postImage = (img, caption) => {
@@ -117,6 +128,10 @@ export default function Gallery({ navigation }) {
     return unsubscribe;
   };
 
+  const handlePost = function () {
+    saveImage(imageUrl);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
@@ -133,10 +148,10 @@ export default function Gallery({ navigation }) {
 
         <View style={styles.bodyContainer}>
           <Button title="Pick an image from camera roll" onPress={pickImage} />
-          {image && (
+          {imageUrl && (
             <View>
               <Image
-                source={{ uri: image }}
+                source={{ uri: imageUrl }}
                 style={{ width: 200, height: 200 }}
               />
               <TextInput
@@ -146,7 +161,7 @@ export default function Gallery({ navigation }) {
                 multiline={true}
                 onChange={(e) => setCaption(e.nativeEvent.text)}
               />
-              <TouchableOpacity style={styles.button} onPress={saveImage}>
+              <TouchableOpacity style={styles.button} onPress={handlePost}>
                 <Text style={styles.text}>Post</Text>
               </TouchableOpacity>
             </View>
