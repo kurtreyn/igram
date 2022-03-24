@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { firebase } from '../../firebase';
 import Icon from './Icon';
 
-const PostFooter = ({ post }) => {
+const PostFooter = ({ post, postFooterIcons }) => {
   return (
     <View style={styles.postFooter}>
       <View style={styles.leftFooterIconsContainer}>

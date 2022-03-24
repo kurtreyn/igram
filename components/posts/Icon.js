@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { postFooterIcons } from '../../shared/postFooterIcons';
 
 const Icon = ({ imgStyle, imageUrl }) => {

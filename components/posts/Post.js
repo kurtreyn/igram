@@ -43,7 +43,11 @@ const Post = ({ post }) => {
       <PostHeader post={post} />
       <PostImage post={post} />
       <View style={styles.postFooterContainer}>
-        <PostFooter post={post} handleLike={handleLike} />
+        <PostFooter
+          post={post}
+          postFooterIcons={postFooterIcons}
+          handleLike={handleLike}
+        />
         <Likes post={post} />
         <Caption post={post} />
         <CommentsSection post={post} />

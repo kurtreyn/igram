@@ -14,8 +14,8 @@ export default function App() {
       const uid = user.uid;
       const displayName = user.displayName;
       const photoURL = user.photoURL;
-      console.log(displayName);
-      console.log(photoURL);
+      // console.log(displayName);
+      // console.log(photoURL);
     } else {
     }
   });

@@ -56,7 +56,7 @@ export default function Gallery({ navigation }) {
     uploadPostToFirebase(fileUrl, caption);
   };
 
-  console.log(`fileUrl: ${fileUrl}`);
+  // console.log(`fileUrl: ${fileUrl}`);
 
   const uploadPostToFirebase = (imageUrl, caption) => {
     const unsubscribe = db

@@ -24,9 +24,9 @@ const HomeScreen = ({ navigation }) => {
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
-        {posts.map((post, index) => {
-          <Post post={post} key={index} />;
-        })}
+        {posts.map((post, index) => (
+          <Post post={post} key={index} />
+        ))}
       </ScrollView>
       <BottomTabs icons={bottomTabIcons} posts={posts} />
     </SafeAreaView>
