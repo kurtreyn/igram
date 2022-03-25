@@ -20,7 +20,7 @@ const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 export default function Gallery({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [fileName, setFileName] = useState('');
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   // const user = firebase.auth().currentUser;
@@ -59,7 +59,8 @@ export default function Gallery({ navigation }) {
 
     if (!result.cancelled) {
       // console.log(`result uri: ${result.uri}`);
-      setImageUrl(result.uri);
+      // setImageUrl(result.uri);
+      saveImage(result.uri);
     }
   };
 
@@ -67,7 +68,6 @@ export default function Gallery({ navigation }) {
 
   const saveImage = async (uri) => {
     let filename = uri.substring(uri.lastIndexOf('/') + 1);
-    // console.log(`filename is: ${filename}`);
     setLoading(true);
     try {
       const response = await fetch(uri);
@@ -77,41 +77,66 @@ export default function Gallery({ navigation }) {
         .ref()
         .child('images/' + filename);
       ref.put(blob);
-      storage
-        .ref('images/' + filename)
-        .getDownloadURL()
-        .then((url) => {
-          postImage(url + filename, caption);
-        });
+
       setLoading(false);
+      // Alert.alert('1 saveImage finished successfully');
     } catch (error) {
       console.log(error);
       Alert.alert(error.message);
     }
+    setImageUrl(uri);
+    // fetchDownloadUrl(filename)
+    setFileName(filename);
+  };
+
+  const fetchDownloadUrl = async (fileN) => {
+    try {
+      storage
+        .ref('images/' + fileN)
+        .getDownloadURL()
+        .then((url) => {
+          postImage(url + fileN, caption);
+          // Alert.alert('2 fetchDownloadUrl completed');
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const postImage = async (img, caption) => {
-    const unsubscribe = db
-      .collection('users')
-      .doc(firebase.auth().currentUser.email)
-      .collection('posts')
-      .add({
-        imageUrl: img,
-        user: currentLoggedInUser.username,
-        profile_picture: currentLoggedInUser.profilePicture,
-        owner_uid: firebase.auth().currentUser.uid,
-        owner_email: firebase.auth().currentUser.email,
-        caption: caption,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        likes_by_users: [],
-        comments: [],
-      })
-      .then(() => navigation.goBack());
-    return unsubscribe;
+    try {
+      const unsubscribe = db
+        .collection('users')
+        .doc(firebase.auth().currentUser.email)
+        .collection('posts')
+        .add({
+          imageUrl: img,
+          user: currentLoggedInUser.username,
+          profile_picture: currentLoggedInUser.profilePicture,
+          owner_uid: firebase.auth().currentUser.uid,
+          owner_email: firebase.auth().currentUser.email,
+          caption: caption,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          likes_by_users: [],
+          comments: [],
+        })
+        // .then(() => Alert.alert('3 postImage function success'))
+        .then(() => navigation.goBack());
+      return unsubscribe;
+    } catch (error) {
+      Alert.alert(error.message);
+    }
   };
 
   const handlePost = async function () {
-    saveImage(imageUrl);
+    // console.log(`fileName is: ${fileName}`);
+    // Alert.alert(`fileName is: ${fileName}`);
+    try {
+      const response = await fetchDownloadUrl(fileName);
+      return response;
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -129,13 +154,24 @@ export default function Gallery({ navigation }) {
         </View>
 
         <View style={styles.bodyContainer}>
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          {!imageUrl && (
+            <Button
+              title="Pick an image from camera roll"
+              onPress={pickImage}
+            />
+          )}
           {imageUrl && (
             <View>
-              <Image
-                source={{ uri: imageUrl }}
-                style={{ width: 200, height: 200 }}
-              />
+              <View style={{ alignItems: 'center' }}>
+                <Image
+                  source={{ uri: imageUrl }}
+                  style={{
+                    width: 300,
+                    height: 300,
+                  }}
+                />
+              </View>
+
               <TextInput
                 style={{ color: 'white', fontSize: 20 }}
                 placeholder="Write a caption..."
@@ -163,14 +199,14 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginHorizontal: 10,
-    marginTop: 20,
+    marginTop: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   bodyContainer: {
     flex: 1,
-    marginTop: 200,
+    marginTop: 50,
   },
   button: {
     alignItems: 'center',

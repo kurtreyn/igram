@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { firebase, db, storage } from '../../firebase';
 import 'firebase/storage';
+import { Divider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
@@ -20,7 +21,7 @@ const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 export default function Gallery({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [fileName, setFileName] = useState('');
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   // const user = firebase.auth().currentUser;
@@ -59,7 +60,8 @@ export default function Gallery({ navigation }) {
 
     if (!result.cancelled) {
       // console.log(`result uri: ${result.uri}`);
-      setImageUrl(result.uri);
+      // setImageUrl(result.uri);
+      saveImage(result.uri);
     }
   };
 
@@ -67,7 +69,6 @@ export default function Gallery({ navigation }) {
 
   const saveImage = async (uri) => {
     let filename = uri.substring(uri.lastIndexOf('/') + 1);
-    // console.log(`filename is: ${filename}`);
     setLoading(true);
     try {
       const response = await fetch(uri);
@@ -77,41 +78,66 @@ export default function Gallery({ navigation }) {
         .ref()
         .child('images/' + filename);
       ref.put(blob);
-      storage
-        .ref('images/' + filename)
-        .getDownloadURL()
-        .then((url) => {
-          postImage(url + filename, caption);
-        });
+
       setLoading(false);
+      // Alert.alert('1 saveImage finished successfully');
     } catch (error) {
       console.log(error);
       Alert.alert(error.message);
     }
+    setImageUrl(uri);
+    // fetchDownloadUrl(filename)
+    setFileName(filename);
+  };
+
+  const fetchDownloadUrl = async (fileN) => {
+    try {
+      storage
+        .ref('images/' + fileN)
+        .getDownloadURL()
+        .then((url) => {
+          postImage(url + fileN, caption);
+          // Alert.alert('2 fetchDownloadUrl completed');
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const postImage = async (img, caption) => {
-    const unsubscribe = db
-      .collection('users')
-      .doc(firebase.auth().currentUser.email)
-      .collection('posts')
-      .add({
-        imageUrl: img,
-        user: currentLoggedInUser.username,
-        profile_picture: currentLoggedInUser.profilePicture,
-        owner_uid: firebase.auth().currentUser.uid,
-        owner_email: firebase.auth().currentUser.email,
-        caption: caption,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        likes_by_users: [],
-        comments: [],
-      })
-      .then(() => navigation.goBack());
-    return unsubscribe;
+    try {
+      const unsubscribe = db
+        .collection('users')
+        .doc(firebase.auth().currentUser.email)
+        .collection('posts')
+        .add({
+          imageUrl: img,
+          user: currentLoggedInUser.username,
+          profile_picture: currentLoggedInUser.profilePicture,
+          owner_uid: firebase.auth().currentUser.uid,
+          owner_email: firebase.auth().currentUser.email,
+          caption: caption,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          likes_by_users: [],
+          comments: [],
+        })
+        // .then(() => Alert.alert('3 postImage function success'))
+        .then(() => navigation.goBack());
+      return unsubscribe;
+    } catch (error) {
+      Alert.alert(error.message);
+    }
   };
 
   const handlePost = async function () {
-    saveImage(imageUrl);
+    // console.log(`fileName is: ${fileName}`);
+    // Alert.alert(`fileName is: ${fileName}`);
+    try {
+      const response = await fetchDownloadUrl(fileName);
+      return response;
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -137,7 +163,7 @@ export default function Gallery({ navigation }) {
           )}
           {imageUrl && (
             <View>
-              <View style={{ alignItems: 'center' }}>
+              <View style={{ alignItems: 'center', marginBottom: 10 }}>
                 <Image
                   source={{ uri: imageUrl }}
                   style={{
@@ -146,14 +172,15 @@ export default function Gallery({ navigation }) {
                   }}
                 />
               </View>
-
+              <Divider width={1} orientation="vertical" />
               <TextInput
-                style={{ color: 'white', fontSize: 20 }}
+                style={{ color: 'white', fontSize: 20, marginTop: 20 }}
                 placeholder="Write a caption..."
                 placeholderTextColor="gray"
                 multiline={true}
                 onChange={(e) => setCaption(e.nativeEvent.text)}
               />
+              <Divider width={1} orientation="vertical" />
               <TouchableOpacity style={styles.button} onPress={handlePost}>
                 <Text style={styles.text}>Post</Text>
               </TouchableOpacity>
@@ -190,7 +217,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 4,
     elevation: 3,
-    backgroundColor: 'lightblue',
+    backgroundColor: '#405DE6',
+    marginTop: 100,
   },
   text: {
     fontSize: 16,
