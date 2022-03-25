@@ -39,27 +39,77 @@ export default function CameraComponent() {
     }
   };
 
-  useEffect(() => {
-    getUserName();
-  }, []);
+  const saveImage = async (uri) => {
+    let filename = uri.substring(uri.lastIndexOf('/') + 1);
+    setLoading(true);
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const ref = firebase
+        .storage()
+        .ref()
+        .child('images/' + filename);
+      ref.put(blob);
 
-  const uploadPostToFirebase = (image) => {
-    const unsubscribe = db
-      .collection('users')
-      .doc(firebase.auth().currentUser.email)
-      .collection('posts')
-      .add({
-        imageUrl: image,
-        user: firebase.auth().username,
-        profile_picture: firebase.auth().photoURL,
-        owner_uid: firebase.auth().currentUser.uid,
-        owner_email: firebase.auth().currentUser.email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        likes_by_users: [],
-        comments: [],
-      })
-      .then(() => navigation.goBack());
-    return unsubscribe;
+      setLoading(false);
+      // Alert.alert('1 saveImage finished successfully');
+    } catch (error) {
+      console.log(error);
+      Alert.alert(error.message);
+    }
+    setImageUrl(uri);
+    // fetchDownloadUrl(filename)
+    setFileName(filename);
+  };
+
+  const fetchDownloadUrl = async (fileN) => {
+    try {
+      storage
+        .ref('images/' + fileN)
+        .getDownloadURL()
+        .then((url) => {
+          postImage(url + fileN, caption);
+          // Alert.alert('2 fetchDownloadUrl completed');
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const postImage = async (img, caption) => {
+    try {
+      const unsubscribe = db
+        .collection('users')
+        .doc(firebase.auth().currentUser.email)
+        .collection('posts')
+        .add({
+          imageUrl: img,
+          user: currentLoggedInUser.username,
+          profile_picture: currentLoggedInUser.profilePicture,
+          owner_uid: firebase.auth().currentUser.uid,
+          owner_email: firebase.auth().currentUser.email,
+          caption: caption,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          likes_by_users: [],
+          comments: [],
+        })
+        // .then(() => Alert.alert('3 postImage function success'))
+        .then(() => navigation.goBack());
+      return unsubscribe;
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
+  const handlePost = async function () {
+    // console.log(`fileName is: ${fileName}`);
+    // Alert.alert(`fileName is: ${fileName}`);
+    try {
+      const response = await fetchDownloadUrl(fileName);
+      return response;
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const getUserName = () => {
@@ -91,14 +141,16 @@ export default function CameraComponent() {
   }
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.cameraContainer}>
-        <Camera
-          ref={(ref) => setCamera(ref)}
-          style={styles.fixedRatioTag}
-          type={type}
-          ratio={'1:1'}
-        />
-      </View>
+      {image ? null : (
+        <View style={styles.cameraContainer}>
+          <Camera
+            ref={(ref) => setCamera(ref)}
+            style={styles.fixedRatioTag}
+            type={type}
+            ratio={'1:1'}
+          />
+        </View>
+      )}
 
       {image && (
         <View>
