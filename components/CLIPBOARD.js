@@ -76,16 +76,13 @@ export default function Gallery({ navigation }) {
         .storage()
         .ref()
         .child('images/' + filename);
+      ref.put(blob);
       storage
         .ref('images/' + filename)
         .getDownloadURL()
         .then((url) => {
           postImage(url + filename, caption);
         });
-      // console.log(`blob is: ${blob}`);
-      // console.log(`ref is: ${ref}`);
-      ref.put(blob);
-      Alert.alert('Post was successful');
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -113,7 +110,7 @@ export default function Gallery({ navigation }) {
     return unsubscribe;
   };
 
-  const handlePost = function () {
+  const handlePost = async function () {
     saveImage(imageUrl);
   };
 

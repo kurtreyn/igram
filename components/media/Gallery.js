@@ -76,16 +76,13 @@ export default function Gallery({ navigation }) {
         .storage()
         .ref()
         .child('images/' + filename);
+      ref.put(blob);
       storage
         .ref('images/' + filename)
         .getDownloadURL()
         .then((url) => {
           postImage(url + filename, caption);
         });
-      // console.log(`blob is: ${blob}`);
-      // console.log(`ref is: ${ref}`);
-      ref.put(blob);
-      Alert.alert('Post was successful');
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -113,7 +110,7 @@ export default function Gallery({ navigation }) {
     return unsubscribe;
   };
 
-  const handlePost = function () {
+  const handlePost = async function () {
     saveImage(imageUrl);
   };
 
@@ -132,13 +129,24 @@ export default function Gallery({ navigation }) {
         </View>
 
         <View style={styles.bodyContainer}>
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          {!imageUrl && (
+            <Button
+              title="Pick an image from camera roll"
+              onPress={pickImage}
+            />
+          )}
           {imageUrl && (
             <View>
-              <Image
-                source={{ uri: imageUrl }}
-                style={{ width: 200, height: 200 }}
-              />
+              <View style={{ alignItems: 'center' }}>
+                <Image
+                  source={{ uri: imageUrl }}
+                  style={{
+                    width: 300,
+                    height: 300,
+                  }}
+                />
+              </View>
+
               <TextInput
                 style={{ color: 'white', fontSize: 20 }}
                 placeholder="Write a caption..."
@@ -166,14 +174,14 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginHorizontal: 10,
-    marginTop: 20,
+    marginTop: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   bodyContainer: {
     flex: 1,
-    marginTop: 200,
+    marginTop: 50,
   },
   button: {
     alignItems: 'center',
