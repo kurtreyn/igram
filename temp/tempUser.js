@@ -17,7 +17,7 @@ const scarPic1Uri = Image.resolveAssetSource(scarPic1).uri;
 
 export const TEMP_USERS = [
   {
-    user: 'Skube',
+    user: 'Skub',
     image: jsPicUri,
   },
   {
@@ -29,11 +29,11 @@ export const TEMP_USERS = [
     image: scarPic1Uri,
   },
   {
-    user: 'KurtReyn',
-    image: krSmPicUri,
+    user: 'CLT',
+    image: krcltPicUri,
   },
   {
     user: 'KurtAcctTwo',
-    image: krcltPicUri,
+    image: friendsPicUri,
   },
 ];

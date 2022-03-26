@@ -59,8 +59,6 @@ export default function Gallery({ navigation }) {
     });
 
     if (!result.cancelled) {
-      // console.log(`result uri: ${result.uri}`);
-      // setImageUrl(result.uri);
       saveImage(result.uri);
     }
   };
