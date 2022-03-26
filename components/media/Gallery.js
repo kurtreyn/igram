@@ -120,6 +120,7 @@ export default function Gallery({ navigation }) {
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           likes_by_users: [],
           comments: [],
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         })
         // .then(() => Alert.alert('3 postImage function success'))
         .then(() => navigation.goBack());

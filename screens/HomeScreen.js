@@ -12,9 +12,13 @@ const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    db.collectionGroup('posts').onSnapshot((snapshot) => {
-      setPosts(snapshot.docs.map((post) => ({ id: post.id, ...post.data() })));
-    });
+    db.collectionGroup('posts')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot((snapshot) => {
+        setPosts(
+          snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
+        );
+      });
   }, []);
 
   // console.log(`POST FROM HOMESCREEN: ${posts}`);
