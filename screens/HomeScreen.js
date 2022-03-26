@@ -10,7 +10,6 @@ import { bottomTabIcons } from '../shared/bottomTabIcons';
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
-  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const unsubscribe = db
@@ -23,8 +22,6 @@ const HomeScreen = ({ navigation }) => {
       });
     return unsubscribe;
   }, []);
-
-  // console.log(`POST FROM HOMESCREEN: ${posts}`);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -31,6 +31,7 @@ export default function CameraComponent({ navigation }) {
   const [fileName, setFileName] = useState('');
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
+  const user = firebase.auth().currentUser;
 
   useEffect(() => {
     (async () => {
@@ -39,8 +40,15 @@ export default function CameraComponent({ navigation }) {
     })();
   }, []);
 
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      const uid = user.uid;
+      const displayName = user.displayName;
+      const photoURL = user.photoURL;
+    }
+  });
+
   const getUserName = () => {
-    const user = firebase.auth().currentUser;
     const unsubscribe = db
       .collection('users')
       .where('owner_uid', '==', user.uid)
@@ -63,49 +71,59 @@ export default function CameraComponent({ navigation }) {
   const takePicture = async () => {
     if (camera) {
       const data = await camera.takePictureAsync(null);
-      // setImage(data.uri);
-      //   console.log(data.uri);
-      saveImage(data.uri);
+      setImageUrl(data.uri);
     }
   };
 
   const saveImage = async (uri) => {
-    let filename = uri.substring(uri.lastIndexOf('/') + 1);
     setLoading(true);
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
-      const ref = firebase
+      let filename = `${uuid}.png`;
+      // let filename = uri.substring(uri.lastIndexOf('/') + 1);
+      const storageRef = firebase
         .storage()
         .ref()
-        .child('images/' + filename);
-      ref.put(blob);
+        .child('postImages/' + filename);
 
-      setLoading(false);
-      // Alert.alert('1 saveImage finished successfully');
+      const uploadTask = storageRef.put(blob);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED:
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING:
+              console.log('Upload is running');
+              break;
+          }
+        },
+        (error) => {
+          Alert.alert(error.message);
+        },
+        () => {
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then((downloadURL) => {
+              console.log(`downloadURL is: ${downloadURL}`);
+              postImage(downloadURL, caption);
+            })
+            .then(() => navigation.navigate('HomeScreen'));
+        }
+      );
     } catch (error) {
       console.log(error);
       Alert.alert(error.message);
     }
-    setImageUrl(uri);
-    // fetchDownloadUrl(filename)
-    setFileName(filename);
+    setLoading(false);
   };
-
-  const fetchDownloadUrl = async (fileN) => {
-    try {
-      storage
-        .ref('images/' + fileN)
-        .getDownloadURL()
-        .then((url) => {
-          postImage(url + fileN, caption);
-          // Alert.alert('2 fetchDownloadUrl completed');
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const postImage = async (img, caption) => {
     try {
       const unsubscribe = db
@@ -132,13 +150,15 @@ export default function CameraComponent({ navigation }) {
   };
 
   const handlePost = async function () {
-    // console.log(`fileName is: ${fileName}`);
-    // Alert.alert(`fileName is: ${fileName}`);
-    try {
-      const response = await fetchDownloadUrl(fileName);
-      return response;
-    } catch (error) {
-      console.log(error.message);
+    if (!loading) {
+      try {
+        const response = await saveImage(imageUrl);
+        return response;
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      Alert.alert('Post in progress');
     }
   };
 
@@ -176,15 +196,21 @@ export default function CameraComponent({ navigation }) {
             <Divider width={1} orientation="vertical" />
             <TextInput
               style={{ color: 'white', fontSize: 20, marginTop: 20 }}
-              placeholder="Write a caption..."
+              placeholder="Add caption to post"
               placeholderTextColor="gray"
               multiline={true}
               onChange={(e) => setCaption(e.nativeEvent.text)}
             />
             <Divider width={1} orientation="vertical" />
-            <TouchableOpacity style={styles.button} onPress={handlePost}>
-              <Text style={styles.text}>Post</Text>
-            </TouchableOpacity>
+            {caption.length < 1 ? null : (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handlePost}
+                disabled={loading}
+              >
+                <Text style={styles.text}>Post</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
         {imageUrl ? null : (

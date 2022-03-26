@@ -39,7 +39,6 @@ export default function Gallery({ navigation }) {
   });
 
   const getUserName = () => {
-    const user = firebase.auth().currentUser;
     const unsubscribe = db
       .collection('users')
       .where('owner_uid', '==', user.uid)
@@ -73,6 +72,7 @@ export default function Gallery({ navigation }) {
   };
 
   const saveImage = async (uri) => {
+    setLoading(true);
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -84,8 +84,6 @@ export default function Gallery({ navigation }) {
         .child('postImages/' + filename);
 
       const uploadTask = storageRef.put(blob);
-
-      setLoading(true);
 
       uploadTask.on(
         'state_changed',
@@ -116,8 +114,6 @@ export default function Gallery({ navigation }) {
             .then(() => navigation.navigate('HomeScreen'));
         }
       );
-
-      setLoading(false);
     } catch (error) {
       console.log(error);
       Alert.alert(error.message);
@@ -133,7 +129,7 @@ export default function Gallery({ navigation }) {
         .add({
           imageUrl: img,
           user: currentLoggedInUser.username,
-          profile_picture: currentLoggedInUser.profilePicture,
+          profile_picture: user.photoURL,
           owner_uid: firebase.auth().currentUser.uid,
           owner_email: firebase.auth().currentUser.email,
           caption: caption,
@@ -147,14 +143,19 @@ export default function Gallery({ navigation }) {
     } catch (error) {
       Alert.alert(error.message);
     }
+    setLoading(false);
   };
 
   const handlePost = async function () {
-    try {
-      const response = await saveImage(imageUrl);
-      return response;
-    } catch (error) {
-      console.log(error.message);
+    if (!loading) {
+      try {
+        const response = await saveImage(imageUrl);
+        return response;
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      Alert.alert('Post in progress');
     }
   };
 
@@ -193,14 +194,18 @@ export default function Gallery({ navigation }) {
               <Divider width={1} orientation="vertical" />
               <TextInput
                 style={{ color: 'white', fontSize: 20, marginTop: 20 }}
-                placeholder="Add caption before posting"
+                placeholder="Add caption to post"
                 placeholderTextColor="gray"
                 multiline={true}
                 onChange={(e) => setCaption(e.nativeEvent.text)}
               />
               <Divider width={1} orientation="vertical" />
               {caption.length < 1 ? null : (
-                <TouchableOpacity style={styles.button} onPress={handlePost}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handlePost}
+                  disabled={loading}
+                >
                   <Text style={styles.text}>Post</Text>
                 </TouchableOpacity>
               )}
