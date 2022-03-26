@@ -5,7 +5,7 @@ import { firebase, db } from '../firebase';
 import PROFILE_AVATAR from '../assets/profile-avatar.png';
 const profileAvatar = Image.resolveAssetSource(PROFILE_AVATAR).uri;
 
-const BottomTabs = ({ icons }) => {
+const BottomTabs = ({ icons, navigation }) => {
   const [activeTab, setActiveTab] = useState('Home');
   const [profilePic, setProfilePic] = useState(profileAvatar);
   const user = firebase.auth().currentUser;
@@ -34,7 +34,7 @@ const BottomTabs = ({ icons }) => {
   );
 
   const ProfileIcon = () => (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate('UpdateProfile')}>
       <Image source={{ uri: profilePic }} style={styles.profilePicIcon} />
     </TouchableOpacity>
   );

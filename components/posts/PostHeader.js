@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { firebase, db } from '../../firebase';
 
 const PostHeader = ({ post }) => {
+  const user = firebase.auth().currentUser;
   return (
     <View style={styles.postHeader}>
       <View style={styles.userContainer}>

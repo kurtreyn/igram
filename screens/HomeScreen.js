@@ -23,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  console.log(`POST FROM HOMESCREEN: ${posts}`);
+  // console.log(`POST FROM HOMESCREEN: ${posts}`);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,7 +34,11 @@ const HomeScreen = ({ navigation }) => {
           <Post post={post} key={index} />
         ))}
       </ScrollView>
-      <BottomTabs icons={bottomTabIcons} posts={posts} />
+      <BottomTabs
+        icons={bottomTabIcons}
+        posts={posts}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };
