@@ -10,6 +10,7 @@ import { bottomTabIcons } from '../shared/bottomTabIcons';
 
 const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const unsubscribe = db
