@@ -105,13 +105,10 @@ export default function Gallery({ navigation }) {
           Alert.alert(error.message);
         },
         () => {
-          uploadTask.snapshot.ref
-            .getDownloadURL()
-            .then((downloadURL) => {
-              console.log(`downloadURL is: ${downloadURL}`);
-              postImage(downloadURL, caption);
-            })
-            .then(() => navigation.navigate('HomeScreen'));
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log(`downloadURL is: ${downloadURL}`);
+            postImage(downloadURL, caption);
+          });
         }
       );
     } catch (error) {

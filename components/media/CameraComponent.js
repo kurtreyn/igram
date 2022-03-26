@@ -15,6 +15,8 @@ import { firebase, db, storage } from '../../firebase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 import camera_icon from '../../assets/camera-icon.png';
 import rotate_icon from '../../assets/rotate-icon.png';
@@ -32,6 +34,7 @@ export default function CameraComponent({ navigation }) {
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
   const user = firebase.auth().currentUser;
+  const uuid = uuidv4();
 
   useEffect(() => {
     (async () => {
@@ -109,20 +112,16 @@ export default function CameraComponent({ navigation }) {
           Alert.alert(error.message);
         },
         () => {
-          uploadTask.snapshot.ref
-            .getDownloadURL()
-            .then((downloadURL) => {
-              console.log(`downloadURL is: ${downloadURL}`);
-              postImage(downloadURL, caption);
-            })
-            .then(() => navigation.navigate('HomeScreen'));
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log(`downloadURL is: ${downloadURL}`);
+            postImage(downloadURL, caption);
+          });
         }
       );
     } catch (error) {
       console.log(error);
       Alert.alert(error.message);
     }
-    setLoading(false);
   };
   const postImage = async (img, caption) => {
     try {
@@ -133,7 +132,7 @@ export default function CameraComponent({ navigation }) {
         .add({
           imageUrl: img,
           user: currentLoggedInUser.username,
-          profile_picture: currentLoggedInUser.profilePicture,
+          profile_picture: user.photoURL,
           owner_uid: firebase.auth().currentUser.uid,
           owner_email: firebase.auth().currentUser.email,
           caption: caption,
@@ -147,6 +146,7 @@ export default function CameraComponent({ navigation }) {
     } catch (error) {
       Alert.alert(error.message);
     }
+    setLoading(false);
   };
 
   const handlePost = async function () {
