@@ -12,16 +12,18 @@ const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    db.collectionGroup('posts')
+    const unsubscribe = db
+      .collectionGroup('posts')
       .orderBy('timestamp', 'desc')
       .onSnapshot((snapshot) => {
         setPosts(
           snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
         );
       });
+    return unsubscribe;
   }, []);
 
-  // console.log(`POST FROM HOMESCREEN: ${posts}`);
+  console.log(`POST FROM HOMESCREEN: ${posts}`);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -117,13 +117,12 @@ export default function Gallery({ navigation }) {
           owner_uid: firebase.auth().currentUser.uid,
           owner_email: firebase.auth().currentUser.email,
           caption: caption,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           likes_by_users: [],
           comments: [],
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         })
         // .then(() => Alert.alert('3 postImage function success'))
-        .then(() => navigation.goBack());
+        .then(() => navigation.push('HomeScreen'));
       return unsubscribe;
     } catch (error) {
       Alert.alert(error.message);
