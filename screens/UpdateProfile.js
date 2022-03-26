@@ -15,6 +15,8 @@ import { firebase, db, storage } from '../firebase';
 import 'firebase/storage';
 import { Divider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 import BACK_ARROW_ICON from '../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
@@ -24,21 +26,15 @@ export default function UpdateProfile({ navigation }) {
   const [fileName, setFileName] = useState('');
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
-  // const user = firebase.auth().currentUser;
-
-  // console.log(currentLoggedInUser);
-  // console.log(caption);
 
   const user = firebase.auth().currentUser;
+  const uuid = uuidv4();
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       const uid = user.uid;
       const displayName = user.displayName;
       const photoURL = user.photoURL;
-      // console.log(displayName);
-      // console.log(photoURL);
-    } else {
     }
   });
 
@@ -72,96 +68,65 @@ export default function UpdateProfile({ navigation }) {
     });
 
     if (!result.cancelled) {
-      // console.log(`result uri: ${result.uri}`);
-      // setImageUrl(result.uri);
-      saveImage(result.uri);
+      setImageUrl(result.uri);
     }
   };
 
-  // console.log(`imageUrl is: ${imageUrl}`);
-
   const saveImage = async (uri) => {
-    let filename = uri.substring(uri.lastIndexOf('/') + 1);
-    setLoading(true);
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
-      const ref = firebase
+      let filename = `${uuid}.png`;
+      // let filename = uri.substring(uri.lastIndexOf('/') + 1);
+      const storageRef = firebase
         .storage()
         .ref()
         .child('profilePic/' + filename);
-      ref.put(blob);
+
+      const uploadTask = storageRef.put(blob);
+
+      setLoading(true);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED:
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING:
+              console.log('Upload is running');
+              break;
+          }
+        },
+        (error) => {
+          Alert.alert(error.message);
+        },
+        () => {
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then((downloadURL) => {
+              console.log(`downloadURL is: ${downloadURL}`);
+              user.updateProfile({ photoURL: downloadURL });
+            })
+            .then(() => navigation.navigate('HomeScreen'));
+        }
+      );
 
       setLoading(false);
-      // Alert.alert('1 saveImage finished successfully');
     } catch (error) {
       console.log(error);
-      Alert.alert(error.message);
-    }
-    setImageUrl(uri);
-    // fetchDownloadUrl(filename)
-    setFileName(filename);
-  };
-
-  const fetchDownloadUrl = async (fileN) => {
-    try {
-      storage
-        .ref('profilePic/' + fileN)
-        .getDownloadURL()
-        .then((url) => {
-          updateProfilePic(url + fileN);
-          postImage(url);
-          // Alert.alert('2 fetchDownloadUrl completed');
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const updateProfilePic = async (pic) => {
-    user
-      .updateProfile({
-        photoURL: pic,
-      })
-      .then(() => {
-        console.log('update successful');
-        console.log(`-----NEW photoURL: ${user.photoURL}`);
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  };
-
-  const postImage = async (img) => {
-    try {
-      const unsubscribe = db
-        .collection('users')
-        .doc(firebase.auth().currentUser.email)
-        .collection('posts')
-        .add({
-          imageUrl: null,
-          user: currentLoggedInUser.username,
-          profile_picture: img,
-          owner_uid: firebase.auth().currentUser.uid,
-          owner_email: firebase.auth().currentUser.email,
-          caption: caption,
-          likes_by_users: [],
-          comments: [],
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        })
-        // .then(() => Alert.alert('3 postImage function success'))
-        .then(() => navigation.push('HomeScreen'));
-      return unsubscribe;
-    } catch (error) {
       Alert.alert(error.message);
     }
   };
 
   const handlePost = async function () {
-    // console.log(`fileName is: ${fileName}`);
-    // Alert.alert(`fileName is: ${fileName}`);
     try {
-      const response = await fetchDownloadUrl(fileName);
+      const response = await saveImage(imageUrl);
       return response;
     } catch (error) {
       console.log(error.message);
