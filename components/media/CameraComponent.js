@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { firebase, db } from '../../firebase';
+import 'react-native-get-random-values';
 import { user, uuid } from '../../shared/sharedFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';

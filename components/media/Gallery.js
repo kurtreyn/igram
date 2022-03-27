@@ -16,7 +16,6 @@ import 'firebase/storage';
 import { Divider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import 'react-native-get-random-values';
-// import * as Progress from 'react-native-progress';
 import { user, uuid } from '../../shared/sharedFunctions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
@@ -197,7 +196,6 @@ export default function Gallery({ navigation }) {
                   disabled={loading}
                 >
                   <Text style={styles.text}>Post</Text>
-                  {/* <Progress.Bar style={styles.progress} progress={progress} /> */}
                 </TouchableOpacity>
               )}
             </View>
@@ -242,13 +240,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
     color: 'white',
   },
-  progress: {
-    margin: 10,
-    width: 200,
-    height: 6,
-    color: '#405DE6',
-    borderRadius: 4,
-    animate: true,
-    borderWidth: 1,
-  },
+  // progress: {
+  //   margin: 10,
+  //   width: 200,
+  //   height: 6,
+  //   color: '#405DE6',
+  //   borderRadius: 4,
+  //   animate: true,
+  //   borderWidth: 1,
+  // },
 });
