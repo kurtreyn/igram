@@ -27,6 +27,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "Instagram clone by Kurt Reynolds v1.0",
+    "githubUrl": "https://github.com/kurtreyn/igram.git"
   }
 }
