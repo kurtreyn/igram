@@ -11,12 +11,13 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { firebase, db, storage } from '../../firebase';
+import { firebase, db } from '../../firebase';
 import 'firebase/storage';
 import { Divider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+import * as Progress from 'react-native-progress';
+import { user, uuid } from '../../shared/sharedFunctions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
@@ -26,17 +27,7 @@ export default function Gallery({ navigation }) {
   const [fileName, setFileName] = useState('');
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
-
-  const user = firebase.auth().currentUser;
-  const uuid = uuidv4();
-
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      const uid = user.uid;
-      const displayName = user.displayName;
-      const photoURL = user.photoURL;
-    }
-  });
+  const [progress, setProgress] = useState(null);
 
   const getUserName = () => {
     const unsubscribe = db
@@ -77,7 +68,7 @@ export default function Gallery({ navigation }) {
       const response = await fetch(uri);
       const blob = await response.blob();
       let filename = `${uuid}.png`;
-      // let filename = uri.substring(uri.lastIndexOf('/') + 1);
+
       const storageRef = firebase
         .storage()
         .ref()
@@ -88,8 +79,7 @@ export default function Gallery({ navigation }) {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(snapshot.bytesTransferred / snapshot.totalBytes);
           console.log('Upload is ' + progress + '% done');
 
           switch (snapshot.state) {
@@ -207,10 +197,12 @@ export default function Gallery({ navigation }) {
                   disabled={loading}
                 >
                   <Text style={styles.text}>Post</Text>
+                  <Progress.Bar style={styles.progress} progress={progress} />
                 </TouchableOpacity>
               )}
             </View>
           )}
+          <View></View>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -249,5 +241,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
+  },
+  progress: {
+    margin: 10,
+    width: 200,
+    height: 6,
+    color: '#405DE6',
+    borderRadius: 4,
+    animate: true,
+    borderWidth: 1,
   },
 });

@@ -11,12 +11,12 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { firebase, db, storage } from '../../firebase';
+import { firebase, db } from '../../firebase';
+import { user, uuid } from '../../shared/sharedFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
 import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
 
 import camera_icon from '../../assets/camera-icon.png';
 import rotate_icon from '../../assets/rotate-icon.png';
@@ -28,13 +28,11 @@ export default function CameraComponent({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [camera, setCamera] = useState(null);
-  const [image, setImage] = useState(null);
+
   const [imageUrl, setImageUrl] = useState(null);
-  const [fileName, setFileName] = useState('');
+
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
-  const user = firebase.auth().currentUser;
-  const uuid = uuidv4();
 
   useEffect(() => {
     (async () => {
@@ -42,14 +40,6 @@ export default function CameraComponent({ navigation }) {
       setHasCameraPermission(cameraStatus.status === 'granted');
     })();
   }, []);
-
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      const uid = user.uid;
-      const displayName = user.displayName;
-      const photoURL = user.photoURL;
-    }
-  });
 
   const getUserName = () => {
     const unsubscribe = db
