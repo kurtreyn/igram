@@ -2,6 +2,14 @@
 
 ## By: Kurt Reynolds
 
+## UPDATEDS 3.27.22
+
+- updated to v1.2
+  - added new header logo
+  - updated style to stories component
+  - fixded the like feature to function properly
+  - started working on refactoring code
+
 ## UPDATED NOTES:
 
 - Code needs to be refactored to meet DRY principles. As of right now the code works, but it is repeated.
