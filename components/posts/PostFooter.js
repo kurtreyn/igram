@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { firebase } from '../../firebase';
 import Icon from './Icon';
 
-const PostFooter = ({ post, postFooterIcons }) => {
+const PostFooter = ({ post, postFooterIcons, handleLike }) => {
   return (
     <View style={styles.postFooter}>
       <View style={styles.leftFooterIconsContainer}>

@@ -80,7 +80,7 @@ const Header = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity>
           <View style={styles.unreadBadge}>
-            <Text style={styles.unreadBadgeText}>11</Text>
+            <Text style={styles.unreadBadgeText}>2</Text>
           </View>
           <Image
             source={{

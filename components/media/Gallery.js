@@ -161,12 +161,15 @@ export default function Gallery({ navigation }) {
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
-            <Image
-              source={{
-                uri: backArrowIcon,
-              }}
-              style={{ width: 30, height: 30 }}
-            />
+            <View style={{ flexDirection: 'row' }}>
+              <Image
+                source={{
+                  uri: backArrowIcon,
+                }}
+                style={{ width: 30, height: 30, marginTop: 30 }}
+              />
+              <Text style={{ color: '#FFF', marginTop: 35 }}>Back</Text>
+            </View>
           </TouchableOpacity>
         </View>
 
