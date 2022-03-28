@@ -1,5 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import LoginForm from '../components/loginScreen/LoginForm';
 
 import IG_LOGO from '../assets/instagram-logo.png';
@@ -7,12 +15,19 @@ const instagramLogo = Image.resolveAssetSource(IG_LOGO).uri;
 
 const LoginScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image source={{ uri: instagramLogo, height: 100, width: 100 }} />
-      </View>
-      <LoginForm navigation={navigation} />
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View>
+          <View style={styles.logoContainer}>
+            <Image source={{ uri: instagramLogo, height: 100, width: 100 }} />
+          </View>
+          <LoginForm navigation={navigation} />
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

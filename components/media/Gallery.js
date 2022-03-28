@@ -10,6 +10,8 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { firebase, db } from '../../firebase';
 import 'firebase/storage';
@@ -148,67 +150,72 @@ export default function Gallery({ navigation }) {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
-            <View style={{ flexDirection: 'row' }}>
-              <Image
-                source={{
-                  uri: backArrowIcon,
-                }}
-                style={{ width: 30, height: 30, marginTop: 30 }}
-              />
-              <Text style={{ color: '#FFF', marginTop: 35 }}>Back</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.bodyContainer}>
-          {!imageUrl && (
-            <Button
-              title="Pick an image from camera roll"
-              onPress={pickImage}
-            />
-          )}
-          {imageUrl && (
-            <View>
-              <View style={{ alignItems: 'center', marginBottom: 10 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+              <View style={{ flexDirection: 'row' }}>
                 <Image
-                  source={{ uri: imageUrl }}
-                  style={{
-                    width: 300,
-                    height: 300,
+                  source={{
+                    uri: backArrowIcon,
                   }}
+                  style={{ width: 30, height: 30, marginTop: 30 }}
                 />
+                <Text style={{ color: '#FFF', marginTop: 35 }}>Back</Text>
               </View>
-              <Divider width={1} orientation="vertical" />
-              <TextInput
-                style={{ color: 'white', fontSize: 20, marginTop: 20 }}
-                placeholder="Add caption to post"
-                placeholderTextColor="gray"
-                returnKeyLabel="Done"
-                returnKeyType="done"
-                onSubmitEditing={Keyboard.dismiss}
-                multiline={true}
-                onChange={(e) => setCaption(e.nativeEvent.text)}
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.bodyContainer}>
+            {!imageUrl && (
+              <Button
+                title="Pick an image from camera roll"
+                onPress={pickImage}
               />
-              <Divider width={1} orientation="vertical" />
-              {caption.length < 1 ? null : (
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handlePost}
-                  disabled={loading}
-                >
-                  <Text style={styles.text}>Post</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-          <View></View>
+            )}
+            {imageUrl && (
+              <View>
+                <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={{
+                      width: 300,
+                      height: 300,
+                    }}
+                  />
+                </View>
+                <Divider width={1} orientation="vertical" />
+                <TextInput
+                  style={{ color: 'white', fontSize: 20, marginTop: 20 }}
+                  placeholder="Add caption to post"
+                  placeholderTextColor="gray"
+                  returnKeyLabel="Done"
+                  returnKeyType="done"
+                  onSubmitEditing={Keyboard.dismiss}
+                  multiline={true}
+                  onChange={(e) => setCaption(e.nativeEvent.text)}
+                />
+                <Divider width={1} orientation="vertical" />
+                {caption.length < 1 ? null : (
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handlePost}
+                    disabled={loading}
+                  >
+                    <Text style={styles.text}>Post</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+            <View></View>
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -10,6 +10,8 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { firebase, db } from '../../firebase';
 import 'react-native-get-random-values';
@@ -160,84 +162,89 @@ export default function CameraComponent({ navigation }) {
     return <Text>No access to camera</Text>;
   }
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <SafeAreaView style={styles.container}>
-        {imageUrl ? null : (
-          <View style={styles.cameraContainer}>
-            <Camera
-              ref={(ref) => setCamera(ref)}
-              style={styles.fixedRatioTag}
-              type={type}
-              ratio={'1:1'}
-            />
-          </View>
-        )}
-
-        {imageUrl && (
-          <View>
-            <View style={{ alignItems: 'center', marginBottom: 10 }}>
-              <Image
-                source={{ uri: imageUrl }}
-                style={{
-                  width: 300,
-                  height: 300,
-                }}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.container}>
+          {imageUrl ? null : (
+            <View style={styles.cameraContainer}>
+              <Camera
+                ref={(ref) => setCamera(ref)}
+                style={styles.fixedRatioTag}
+                type={type}
+                ratio={'1:1'}
               />
             </View>
-            <Divider width={1} orientation="vertical" />
-            <TextInput
-              style={{ color: 'white', fontSize: 20, marginTop: 20 }}
-              placeholder="Add caption to post"
-              placeholderTextColor="gray"
-              returnKeyLabel="Done"
-              returnKeyType="done"
-              onSubmitEditing={Keyboard.dismiss}
-              multiline={true}
-              onChange={(e) => setCaption(e.nativeEvent.text)}
-            />
-            <Divider width={1} orientation="vertical" />
-            {caption.length < 1 ? null : (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handlePost}
-                disabled={loading}
-              >
-                <Text style={styles.text}>Post</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-        {imageUrl ? null : (
-          <>
-            <TouchableOpacity
-              style={styles.rotateIconContainer}
-              onPress={() => {
-                setType(
-                  type === Camera.Constants.Type.back
-                    ? Camera.Constants.Type.front
-                    : Camera.Constants.Type.back
-                );
-              }}
-            >
-              <Image
-                source={{ uri: rotateIcon }}
-                style={{ width: 20, height: 20 }}
-              />
-            </TouchableOpacity>
+          )}
 
-            <TouchableOpacity
-              style={styles.cameraIconContainer}
-              onPress={() => takePicture()}
-            >
-              <Image
-                source={{ uri: cameraIcon }}
-                style={{ width: 60, height: 60 }}
+          {imageUrl && (
+            <View>
+              <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                <Image
+                  source={{ uri: imageUrl }}
+                  style={{
+                    width: 300,
+                    height: 300,
+                  }}
+                />
+              </View>
+              <Divider width={1} orientation="vertical" />
+              <TextInput
+                style={{ color: 'white', fontSize: 20, marginTop: 20 }}
+                placeholder="Add caption to post"
+                placeholderTextColor="gray"
+                returnKeyLabel="Done"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                multiline={true}
+                onChange={(e) => setCaption(e.nativeEvent.text)}
               />
-            </TouchableOpacity>
-          </>
-        )}
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+              <Divider width={1} orientation="vertical" />
+              {caption.length < 1 ? null : (
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handlePost}
+                  disabled={loading}
+                >
+                  <Text style={styles.text}>Post</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+          {imageUrl ? null : (
+            <>
+              <TouchableOpacity
+                style={styles.rotateIconContainer}
+                onPress={() => {
+                  setType(
+                    type === Camera.Constants.Type.back
+                      ? Camera.Constants.Type.front
+                      : Camera.Constants.Type.back
+                  );
+                }}
+              >
+                <Image
+                  source={{ uri: rotateIcon }}
+                  style={{ width: 20, height: 20 }}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cameraIconContainer}
+                onPress={() => takePicture()}
+              >
+                <Image
+                  source={{ uri: cameraIcon }}
+                  style={{ width: 60, height: 60 }}
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

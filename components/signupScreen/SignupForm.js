@@ -8,6 +8,10 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -45,105 +49,113 @@ const SignupForm = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.wrapper}>
-      <Formik
-        initialValues={{ email: '', username: '', password: '' }}
-        onSubmit={(values) => {
-          onSignup(values.email, values.username, values.password);
-        }}
-        validationSchema={signupFormSchema}
-        validateOnMount={true}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
-          <>
-            <View
-              style={[
-                styles.inputField,
-                {
-                  borderColor:
-                    values.email.length < 1 || Validator.validate(values.email)
-                      ? '#ccc'
-                      : 'red',
-                },
-              ]}
-            >
-              <TextInput
-                placeholder="Email"
-                placeholderTextColor="#444"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                autoFocus={true}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-              />
-            </View>
-            <View
-              style={[
-                styles.inputField,
-                {
-                  borderColor:
-                    values.email.length < 1 || Validator.validate(values.email)
-                      ? '#ccc'
-                      : 'red',
-                },
-              ]}
-            >
-              <TextInput
-                placeholder="Username"
-                placeholderTextColor="#444"
-                autoCapitalize="none"
-                textContentType="username"
-                autoFocus={true}
-                onChangeText={handleChange('username')}
-                onBlur={handleBlur('username')}
-                value={values.username}
-              />
-            </View>
-            <View
-              style={[
-                styles.inputField,
-                {
-                  borderColor:
-                    1 > values.password.length || values.password.length > 6
-                      ? '#CCC'
-                      : 'red',
-                },
-              ]}
-            >
-              <TextInput
-                placeholder="Password"
-                placeholderTextColor="#444"
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry={true}
-                textContentType="password"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-              />
-            </View>
-            <View style={{ alignItems: 'flex-end', marginBottom: 30 }}>
-              <Text style={{ color: '#6BB8F5' }}>Forgot password?</Text>
-            </View>
-            <Pressable
-              titleSize={20}
-              style={styles.button(isValid)}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.buttonText}>Sign Up</Text>
-            </Pressable>
-            <View style={styles.signupContainer}>
-              <Text>Already have an account?</Text>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Text style={{ color: '#6BB0F5' }}> Log In</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
-      </Formik>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.wrapper}>
+          <Formik
+            initialValues={{ email: '', username: '', password: '' }}
+            onSubmit={(values) => {
+              onSignup(values.email, values.username, values.password);
+            }}
+            validationSchema={signupFormSchema}
+            validateOnMount={true}
+          >
+            {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
+              <>
+                <View
+                  style={[
+                    styles.inputField,
+                    {
+                      borderColor:
+                        values.email.length < 1 ||
+                        Validator.validate(values.email)
+                          ? '#ccc'
+                          : 'red',
+                    },
+                  ]}
+                >
+                  <TextInput
+                    placeholder="Email"
+                    placeholderTextColor="#444"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    textContentType="emailAddress"
+                    autoFocus={true}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                  />
+                </View>
+                <View
+                  style={[
+                    styles.inputField,
+                    {
+                      borderColor:
+                        values.email.length < 1 ||
+                        Validator.validate(values.email)
+                          ? '#ccc'
+                          : 'red',
+                    },
+                  ]}
+                >
+                  <TextInput
+                    placeholder="Username"
+                    placeholderTextColor="#444"
+                    autoCapitalize="none"
+                    textContentType="username"
+                    autoFocus={true}
+                    onChangeText={handleChange('username')}
+                    onBlur={handleBlur('username')}
+                    value={values.username}
+                  />
+                </View>
+                <View
+                  style={[
+                    styles.inputField,
+                    {
+                      borderColor:
+                        1 > values.password.length || values.password.length > 6
+                          ? '#CCC'
+                          : 'red',
+                    },
+                  ]}
+                >
+                  <TextInput
+                    placeholder="Password"
+                    placeholderTextColor="#444"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={true}
+                    textContentType="password"
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                  />
+                </View>
+                <View style={{ alignItems: 'flex-end', marginBottom: 30 }}>
+                  <Text style={{ color: '#6BB8F5' }}>Forgot password?</Text>
+                </View>
+                <Pressable
+                  titleSize={20}
+                  style={styles.button(isValid)}
+                  onPress={handleSubmit}
+                >
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                </Pressable>
+                <View style={styles.signupContainer}>
+                  <Text>Already have an account?</Text>
+                  <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Text style={{ color: '#6BB0F5' }}> Log In</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </Formik>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
