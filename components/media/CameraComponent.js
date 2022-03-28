@@ -13,11 +13,11 @@ import {
 } from 'react-native';
 import { firebase, db } from '../../firebase';
 import 'react-native-get-random-values';
+// import { v4 as uuidv4 } from 'uuid';
 import { user, uuid } from '../../shared/sharedFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
-import 'react-native-get-random-values';
 
 import camera_icon from '../../assets/camera-icon.png';
 import rotate_icon from '../../assets/rotate-icon.png';
@@ -29,11 +29,10 @@ export default function CameraComponent({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [camera, setCamera] = useState(null);
-
   const [imageUrl, setImageUrl] = useState(null);
-
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
+  // const uuid = uuidv4();
 
   useEffect(() => {
     (async () => {
@@ -189,6 +188,9 @@ export default function CameraComponent({ navigation }) {
               style={{ color: 'white', fontSize: 20, marginTop: 20 }}
               placeholder="Add caption to post"
               placeholderTextColor="gray"
+              returnKeyLabel="Done"
+              returnKeyType="done"
+              onSubmitEditing={Keyboard.dismiss}
               multiline={true}
               onChange={(e) => setCaption(e.nativeEvent.text)}
             />

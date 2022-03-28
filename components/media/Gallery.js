@@ -15,7 +15,8 @@ import { firebase, db } from '../../firebase';
 import 'firebase/storage';
 import { Divider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
-import 'react-native-get-random-values';
+// import 'react-native-get-random-values';
+// import { v4 as uuidv4 } from 'uuid';
 import { user, uuid } from '../../shared/sharedFunctions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
@@ -23,10 +24,10 @@ const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 export default function Gallery({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fileName, setFileName] = useState('');
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   const [progress, setProgress] = useState(null);
+  // const uuid = uuidv4();
 
   const getUserName = () => {
     const unsubscribe = db
@@ -185,6 +186,9 @@ export default function Gallery({ navigation }) {
                 style={{ color: 'white', fontSize: 20, marginTop: 20 }}
                 placeholder="Add caption to post"
                 placeholderTextColor="gray"
+                returnKeyLabel="Done"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
                 multiline={true}
                 onChange={(e) => setCaption(e.nativeEvent.text)}
               />
