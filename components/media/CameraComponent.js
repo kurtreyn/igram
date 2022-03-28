@@ -202,14 +202,22 @@ export default function CameraComponent({ navigation }) {
                 onChange={(e) => setCaption(e.nativeEvent.text)}
               />
               <Divider width={1} orientation="vertical" />
-              {caption.length < 1 ? null : (
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handlePost}
-                  disabled={loading}
-                >
-                  <Text style={styles.text}>Post</Text>
-                </TouchableOpacity>
+              {!loading ? (
+                <View>
+                  {caption.length === 0 ? null : (
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handlePost}
+                      disabled={loading}
+                    >
+                      <Text style={styles.text}>Post</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : (
+                <Text style={{ color: '#FFF' }}>
+                  Please wait while your photo posts
+                </Text>
               )}
             </View>
           )}
