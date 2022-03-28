@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import { firebase, db } from '../../firebase';
 import 'react-native-get-random-values';
-// import { v4 as uuidv4 } from 'uuid';
-import { user, uuid } from '../../shared/sharedFunctions';
+import { v4 as uuidv4 } from 'uuid';
+// import { user } from '../../shared/sharedFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
@@ -32,7 +32,8 @@ export default function CameraComponent({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
-  // const uuid = uuidv4();
+  const uuid = uuidv4();
+  const user = firebase.auth().currentUser;
 
   useEffect(() => {
     (async () => {

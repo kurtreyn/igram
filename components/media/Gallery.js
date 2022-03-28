@@ -15,9 +15,9 @@ import { firebase, db } from '../../firebase';
 import 'firebase/storage';
 import { Divider } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
-// import 'react-native-get-random-values';
-// import { v4 as uuidv4 } from 'uuid';
-import { user, uuid } from '../../shared/sharedFunctions';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+// import { user, uuid } from '../../shared/sharedFunctions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
@@ -27,7 +27,8 @@ export default function Gallery({ navigation }) {
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   const [progress, setProgress] = useState(null);
-  // const uuid = uuidv4();
+  const uuid = uuidv4();
+  const user = firebase.auth().currentUser;
 
   const getUserName = () => {
     const unsubscribe = db
