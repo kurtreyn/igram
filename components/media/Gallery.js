@@ -200,18 +200,25 @@ export default function Gallery({ navigation }) {
                   onChange={(e) => setCaption(e.nativeEvent.text)}
                 />
                 <Divider width={1} orientation="vertical" />
-                {caption.length < 1 ? null : (
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={handlePost}
-                    disabled={loading}
-                  >
-                    <Text style={styles.text}>Post</Text>
-                  </TouchableOpacity>
+                {!loading ? (
+                  <View>
+                    {caption.length === 0 ? null : (
+                      <TouchableOpacity
+                        style={styles.button}
+                        onPress={handlePost}
+                        disabled={loading}
+                      >
+                        <Text style={styles.text}>Post</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ) : (
+                  <Text style={{ color: '#FFF' }}>
+                    Please wait while your photo posts
+                  </Text>
                 )}
               </View>
             )}
-            <View></View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -252,13 +259,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
     color: 'white',
   },
-  // progress: {
-  //   margin: 10,
-  //   width: 200,
-  //   height: 6,
-  //   color: '#405DE6',
-  //   borderRadius: 4,
-  //   animate: true,
-  //   borderWidth: 1,
-  // },
+  progressBar: {
+    height: 20,
+    width: '100%',
+    backgroundColor: 'white',
+    borderColor: '#000',
+    borderWidth: 2,
+    borderRadius: 5,
+  },
 });
