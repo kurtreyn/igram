@@ -1,15 +1,11 @@
-import { AppRegistry } from 'react-native';
-import { Provider } from 'react-redux';
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { firebase, db } from './firebase';
-import configureStore from './redux/store';
+import { Provider } from 'react-redux';
+import { Store } from './redux/store';
 import AuthNavigation from './AuthNavigation';
-import { name as appName } from './app.json';
-import KURT_PROFILE_PIC from './assets/kr-profile.jpg';
-const kurtProfilePic = Image.resolveAssetSource(KURT_PROFILE_PIC).uri;
 
-const store = configureStore();
+
 
 export default function App() {
   const user = firebase.auth().currentUser;
@@ -19,15 +15,19 @@ export default function App() {
       const uid = user.uid;
       const displayName = user.displayName;
       const photoURL = user.photoURL;
-    }
+ 
+    } 
   });
 
+
+
   return (
-    <Provider store={store}>
-      <View style={styles.container}>
+    <Provider store={Store}>
+       <View style={styles.container}>
         <AuthNavigation />
       </View>
     </Provider>
+   
   );
 }
 

@@ -1,24 +1,8 @@
-import { IMAGEURL_CHANGE } from './index';
+export const SET_POSTS = 'SET_POSTS'
 
-export function changeImageUrl(image) {
-  return {
-    type: IMAGEURL_CHANGE,
-    payload: image,
-  };
-}
-
-const initialImageUrlState = {
-  image: null,
-};
-
-export const imageUrlReducer = (state = initialImageUrlState, action) => {
-  switch (action.type) {
-    case IMAGEURL_CHANGE:
-      return {
-        ...state,
-        image: action.payload,
-      };
-    default:
-      return state;
-  }
+export const setPosts = post => dispatch => {
+    dispatch({
+        type: SET_POSTS,
+        payload: post,
+    });
 };
