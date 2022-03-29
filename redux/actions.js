@@ -1,8 +1,10 @@
-export const SET_POSTS = 'SET_POSTS'
+export const SET_POSTS = 'SET_POSTS';
 
-export const setPosts = post => dispatch => {
+export const setPosts = (posts) => {
+  return (dispatch) => {
     dispatch({
-        type: SET_POSTS,
-        payload: post,
+      type: SET_POSTS,
+      payload: posts,
     });
+  };
 };

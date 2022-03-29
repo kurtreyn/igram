@@ -10,6 +10,8 @@ import Gallery from '../components/media/Gallery';
 import UpdateProfile from './UpdateProfile';
 import BottomTabs from '../shared/BottomTabs';
 const Stack = createStackNavigator();
+import { Provider } from 'react-redux';
+import { Store } from '../redux/store';
 
 const screenOptions = {
   headerShown: false,
@@ -17,19 +19,21 @@ const screenOptions = {
 
 export const SignedInStack = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="LoginScreen"
-        screenOptions={screenOptions}
-      >
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="NewPostScreen" component={NewPostScreen} />
-        <Stack.Screen name="CameraComponent" component={CameraComponent} />
-        <Stack.Screen name="Gallery" component={Gallery} />
-        <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
-        <Stack.Screen name="BottomTabs" component={BottomTabs} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={Store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="LoginScreen"
+          screenOptions={screenOptions}
+        >
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="NewPostScreen" component={NewPostScreen} />
+          <Stack.Screen name="CameraComponent" component={CameraComponent} />
+          <Stack.Screen name="Gallery" component={Gallery} />
+          <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
+          <Stack.Screen name="BottomTabs" component={BottomTabs} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 
