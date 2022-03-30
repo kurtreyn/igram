@@ -65,11 +65,12 @@ export default function Gallery({ navigation }) {
     });
 
     if (!result.cancelled) {
+      console.log(`RESULT URI: ${result.uri}`);
+      // setImageUrl(result.uri);
       dispatch(setImageUrl(result.uri));
+      console.log(imageUrl);
     }
   };
-
-  // console.log(imageUrl);
 
   const saveImage = async (uri) => {
     setLoading(true);
