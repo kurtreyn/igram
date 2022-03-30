@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  console.log(postsMap);
+  // console.log(postsMap);
 
   // POSTS IS AN OBJECT: NOT USING REDUX
   // const [posts, setPosts] = useState([]);
@@ -53,9 +53,11 @@ const HomeScreen = ({ navigation }) => {
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
-        {postsMap.map((post, index) => (
-          <Post post={post} key={index} />
-        ))}
+        {postsMap ? (
+          postsMap.map((post, index) => <Post post={post} key={index} />)
+        ) : (
+          <Text style={{ color: '#FFF' }}>Loading...</Text>
+        )}
       </ScrollView>
       <BottomTabs
         icons={bottomTabIcons}
