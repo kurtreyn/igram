@@ -12,7 +12,18 @@ const AuthNavigation = () => {
     return firebase.auth().onAuthStateChanged((user) => userHandler(user));
   }, []);
 
-  return <>{currentUser ? <SignedInStack /> : <SignedOutStack />}</>;
+  return (
+    <>
+      {currentUser ? (
+        <SignedInStack
+          currentUser={currentUser}
+          setCurrentUser={setCurrentUser}
+        />
+      ) : (
+        <SignedOutStack />
+      )}
+    </>
+  );
 };
 
 export default AuthNavigation;

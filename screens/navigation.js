@@ -15,7 +15,7 @@ const screenOptions = {
   headerShown: false,
 };
 
-export const SignedInStack = () => {
+export const SignedInStack = ({ currentUser, setCurrentUser }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator
