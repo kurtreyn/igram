@@ -20,7 +20,7 @@ import * as ImagePicker from 'expo-image-picker';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
-import { setImageUrl } from '../../redux/actions';
+import { setImageUrl } from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
@@ -33,7 +33,7 @@ export default function Gallery({ navigation }) {
   const uuid = uuidv4();
   const user = firebase.auth().currentUser;
 
-  const imageUrl = useSelector((state) => state.imageUrlReducer);
+  const imageUrl = useSelector((state) => state.imagUrlReducer);
   const dispatch = useDispatch();
 
   const getUserName = () => {
@@ -69,7 +69,7 @@ export default function Gallery({ navigation }) {
     }
   };
 
-  console.log(imageUrl);
+  // console.log(imageUrl);
 
   const saveImage = async (uri) => {
     setLoading(true);

@@ -11,7 +11,7 @@ import UpdateProfile from './UpdateProfile';
 import BottomTabs from '../shared/BottomTabs';
 const Stack = createStackNavigator();
 import { Provider } from 'react-redux';
-import { Store } from '../redux/store';
+import Store from '../redux/store';
 
 const screenOptions = {
   headerShown: false,

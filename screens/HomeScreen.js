@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { db } from '../firebase';
 import { useSelector, useDispatch } from 'react-redux';
-import { setPosts } from '../redux/actions';
+import { setPosts } from '../redux/actions/indexActions';
 import Header from '../components/home/Header';
 import Post from '../components/posts/Post';
 import Stories from '../components/home/Stories';
@@ -29,7 +29,7 @@ const HomeScreen = ({ navigation }) => {
   //   return unsubscribe;
   // }, []);
 
-  // // console.log(posts);
+  // console.log(posts);
 
   // POSTS IS AN OBJECT: NOT USING REDUX
   const [posts, setPosts] = useState([]);

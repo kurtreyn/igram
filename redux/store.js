@@ -1,13 +1,7 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from './reducers/indexReducers';
 import thunk from 'redux-thunk';
-import { postsReducer, setImageUrlReducer } from './reducers';
 
-// const rootReducer = combineReducers({ postsReducer }, { setImageUrlReducer });
+const Store = createStore(rootReducer, applyMiddleware(thunk));
 
-const Reducers = combineReducers({
-  userState: user,
-});
-
-export const Store = createStore(rootReducer, applyMiddleware(thunk));
-
-export default Reducers;
+export default Store;
