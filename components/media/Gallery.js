@@ -145,7 +145,7 @@ export default function Gallery({ navigation }) {
   const handlePost = async function () {
     if (!loading) {
       try {
-        const response = await saveImage(imageUrl);
+        const response = await saveImage(imageUrl.imageUrl);
         return response;
       } catch (error) {
         console.log(error.message);

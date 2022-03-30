@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  // console.log(postsMap);
+  console.log(postsMap);
 
   // POSTS IS AN OBJECT: NOT USING REDUX
   // const [posts, setPosts] = useState([]);
