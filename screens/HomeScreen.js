@@ -12,38 +12,38 @@ import { bottomTabIcons } from '../shared/bottomTabIcons';
 
 const HomeScreen = ({ navigation }) => {
   // POSTS IS AN OBJECT: USING REDUX
-  const posts = useSelector((state) => state.postsReducer);
-  const dispatch = useDispatch();
+  // const posts = useSelector((state) => state.postsReducer);
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    const unsubscribe = db
-      .collectionGroup('posts')
-      .orderBy('timestamp', 'desc')
-      .onSnapshot((snapshot) => {
-        dispatch(
-          setPosts(
-            snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
-          )
-        );
-      });
-    return unsubscribe;
-  }, []);
-
-  // console.log(posts);
-
-  // POSTS IS AN OBJECT: NOT USING REDUX
-  // const [posts, setPosts] = useState([]);
   // useEffect(() => {
   //   const unsubscribe = db
   //     .collectionGroup('posts')
   //     .orderBy('timestamp', 'desc')
   //     .onSnapshot((snapshot) => {
-  //       setPosts(
-  //         snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
+  //       dispatch(
+  //         setPosts(
+  //           snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
+  //         )
   //       );
   //     });
   //   return unsubscribe;
   // }, []);
+
+  // // console.log(posts);
+
+  // POSTS IS AN OBJECT: NOT USING REDUX
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    const unsubscribe = db
+      .collectionGroup('posts')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot((snapshot) => {
+        setPosts(
+          snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
+        );
+      });
+    return unsubscribe;
+  }, []);
 
   // console.log(typeof posts);
 
@@ -52,9 +52,9 @@ const HomeScreen = ({ navigation }) => {
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
-        {/* {posts.map((post, index) => (
+        {posts.map((post, index) => (
           <Post post={post} key={index} />
-        ))} */}
+        ))}
       </ScrollView>
       <BottomTabs
         icons={bottomTabIcons}

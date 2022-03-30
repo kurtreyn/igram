@@ -1,8 +1,8 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { postsReducer } from './reducers';
+import { postsReducer, setImageUrlReducer } from './reducers';
 
 // const rootReducer = combineReducers({ post: postsReducer });
-const rootReducer = combineReducers({ postsReducer });
+const rootReducer = combineReducers({ postsReducer }, { setImageUrlReducer });
 
-export const Store = createStore(rootReducer, {}, applyMiddleware(thunk));
+export const Store = createStore(rootReducer, applyMiddleware(thunk));
