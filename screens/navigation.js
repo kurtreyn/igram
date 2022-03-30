@@ -38,13 +38,15 @@ export const SignedInStack = () => {
 };
 
 export const SignedOutStack = () => (
-  <NavigationContainer>
-    <Stack.Navigator
-      initialRouteName="LoginScreen"
-      screenOptions={screenOptions}
-    >
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="SignupScreen" component={SignupScreen} />
-    </Stack.Navigator>
-  </NavigationContainer>
+  <Provider store={Store}>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="LoginScreen"
+        screenOptions={screenOptions}
+      >
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="SignupScreen" component={SignupScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </Provider>
 );
