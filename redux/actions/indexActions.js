@@ -28,10 +28,28 @@ export const getUserName = () => {
         snapshot.docs.map((doc) => {
           dispatch({
             type: SET_CURRENT_LOGGED_IN_USER,
-            username: doc.data().username,
-            profilePicture: doc.data().profile_picture,
+            payload: {
+              username: doc.data().username,
+              profilePicture: doc.data().profile_picture,
+            },
           });
         })
       );
+  };
+};
+
+export const fetchPosts = () => {
+  return (dispatch) => {
+    db.collectionGroup('posts')
+      .orderBy('timestamp', 'desc')
+      .onSnapshot((snapshot) => {
+        dispatch({
+          type: SET_POSTS,
+          payload: snapshot.docs.map((post) => ({
+            id: post.id,
+            ...post.data(),
+          })),
+        });
+      });
   };
 };

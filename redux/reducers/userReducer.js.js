@@ -8,7 +8,7 @@ const initialState = {
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_CURRENT_LOGGED_IN_USER:
-      return { ...state, currentLoggedInUser: action.currentLoggedInUser };
+      return { ...state, currentLoggedInUser: action.payload };
     default:
       return state;
   }
