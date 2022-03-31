@@ -1,7 +1,9 @@
-import { USER_STATE_CHANGE } from '../constants/indexConstants';
-import { SET_POSTS, IMAGE_URL } from '../constants/indexConstants';
-
-// import { firebase, db } from '../../firebase';
+import { db } from '../../firebase';
+import {
+  SET_POSTS,
+  IMAGE_URL,
+  SET_CURRENT_LOGGED_IN_USER,
+} from '../constants/indexConstants';
 
 export const setPosts = (posts) => (dispatch) => {
   dispatch({
@@ -17,19 +19,19 @@ export const setImageUrl = (imageUrl) => (dispatch) => {
   });
 };
 
-// export const fetchUser = () => {
-//   return (dispatch) => {
-//     firebase
-//       .firestore()
-//       .collection('users')
-//       .doc(firebase.auth().currentUser.uid)
-//       .get()
-//       .then((snapshot) => {
-//         if (snapshot.exists) {
-//           dispatch({ type: USER_STATE_CHANGE, currentUser: snapshot.data() });
-//         } else {
-//           console.log('User does not exist');
-//         }
-//       });
-//   };
-// };
+export const getUserName = () => {
+  return (dispatch) => {
+    db.collection('users')
+      .where('owner_uid', '==', user.uid)
+      .limit(1)
+      .onSnapshot((snapshot) =>
+        snapshot.docs.map((doc) => {
+          dispatch({
+            type: SET_CURRENT_LOGGED_IN_USER,
+            username: doc.data().username,
+            profilePicture: doc.data().profile_picture,
+          });
+        })
+      );
+  };
+};

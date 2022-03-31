@@ -20,37 +20,38 @@ import * as ImagePicker from 'expo-image-picker';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
-import { setImageUrl } from '../../redux/actions/indexActions';
+import { setImageUrl, getUserName } from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({ navigation }) {
   // const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
+  // const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   const [progress, setProgress] = useState(null);
   const uuid = uuidv4();
   const user = firebase.auth().currentUser;
 
+  const currentLoggedInUser = useSelector((state) => state.userReducer);
   const imageUrl = useSelector((state) => state.imagUrlReducer);
   const dispatch = useDispatch();
 
-  const getUserName = () => {
-    const unsubscribe = db
-      .collection('users')
-      .where('owner_uid', '==', user.uid)
-      .limit(1)
-      .onSnapshot((snapshot) =>
-        snapshot.docs.map((doc) => {
-          setCurrentLoggedInUser({
-            username: doc.data().username,
-            profilePicture: doc.data().profile_picture,
-          });
-        })
-      );
-    return unsubscribe;
-  };
+  // const getUserName = () => {
+  //   const unsubscribe = db
+  //     .collection('users')
+  //     .where('owner_uid', '==', user.uid)
+  //     .limit(1)
+  //     .onSnapshot((snapshot) =>
+  //       snapshot.docs.map((doc) => {
+  //         setCurrentLoggedInUser({
+  //           username: doc.data().username,
+  //           profilePicture: doc.data().profile_picture,
+  //         });
+  //       })
+  //     );
+  //   return unsubscribe;
+  // };
 
   useEffect(() => {
     getUserName();
