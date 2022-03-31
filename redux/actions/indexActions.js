@@ -1,9 +1,11 @@
-import { db } from '../../firebase';
+import { firebase, db } from '../../firebase';
 import {
   SET_POSTS,
   IMAGE_URL,
   SET_CURRENT_LOGGED_IN_USER,
 } from '../constants/indexConstants';
+export const user = firebase.auth().currentUser;
+// console.log(user);
 
 export const setPosts = (posts) => (dispatch) => {
   dispatch({
@@ -19,22 +21,26 @@ export const setImageUrl = (imageUrl) => (dispatch) => {
   });
 };
 
-export const getUserName = () => {
+export const getUserName = (dispatch) => {
   return (dispatch) => {
-    db.collection('users')
-      .where('owner_uid', '==', user.uid)
-      .limit(1)
-      .onSnapshot((snapshot) =>
-        snapshot.docs.map((doc) => {
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists) {
           dispatch({
-            type: SET_CURRENT_LOGGED_IN_USER,
+            type: USER_STATE_CHANGE,
             payload: {
               username: doc.data().username,
               profilePicture: doc.data().profile_picture,
             },
           });
-        })
-      );
+        } else {
+          console.log('does not exist');
+        }
+      });
   };
 };
 

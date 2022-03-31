@@ -5,7 +5,7 @@ const initialState = {
   profilePicture: null,
 };
 
-const userReducer = (state = initialState, action) => {
+export const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_CURRENT_LOGGED_IN_USER:
       return { ...state, currentLoggedInUser: action.payload };

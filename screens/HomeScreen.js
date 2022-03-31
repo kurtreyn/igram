@@ -12,9 +12,9 @@ import { bottomTabIcons } from '../shared/bottomTabIcons';
 
 const HomeScreen = ({ navigation }) => {
   // POSTS IS AN OBJECT: USING REDUX
-  const posts = useSelector((state) => state.postsReducer);
+  const { posts } = useSelector((state) => state.postsReducer);
   const dispatch = useDispatch();
-  const postsMap = posts.posts;
+  // const postsMap = posts.posts;
 
   useEffect(() => {
     const unsubscribe = db
@@ -30,31 +30,13 @@ const HomeScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  // console.log(postsMap);
-
-  // POSTS IS AN OBJECT: NOT USING REDUX
-  // const [posts, setPosts] = useState([]);
-  // useEffect(() => {
-  //   const unsubscribe = db
-  //     .collectionGroup('posts')
-  //     .orderBy('timestamp', 'desc')
-  //     .onSnapshot((snapshot) => {
-  //       setPosts(
-  //         snapshot.docs.map((post) => ({ id: post.id, ...post.data() }))
-  //       );
-  //     });
-  //   return unsubscribe;
-  // }, []);
-
-  // console.log(posts);
-
   return (
     <SafeAreaView style={styles.container}>
       <Header navigation={navigation} />
       <Stories />
       <ScrollView>
-        {postsMap ? (
-          postsMap.map((post, index) => <Post post={post} key={index} />)
+        {posts ? (
+          posts.map((post, index) => <Post post={post} key={index} />)
         ) : (
           <Text style={{ color: '#FFF' }}>Loading...</Text>
         )}

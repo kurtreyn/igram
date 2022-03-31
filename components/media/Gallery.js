@@ -25,7 +25,6 @@ import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({ navigation }) {
-  // const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   // const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
@@ -34,28 +33,13 @@ export default function Gallery({ navigation }) {
   const user = firebase.auth().currentUser;
 
   const currentLoggedInUser = useSelector((state) => state.userReducer);
-  const imageUrl = useSelector((state) => state.imagUrlReducer);
+  const { imageUrl } = useSelector((state) => state.imageUrlReducer);
   const dispatch = useDispatch();
-
-  // const getUserName = () => {
-  //   const unsubscribe = db
-  //     .collection('users')
-  //     .where('owner_uid', '==', user.uid)
-  //     .limit(1)
-  //     .onSnapshot((snapshot) =>
-  //       snapshot.docs.map((doc) => {
-  //         setCurrentLoggedInUser({
-  //           username: doc.data().username,
-  //           profilePicture: doc.data().profile_picture,
-  //         });
-  //       })
-  //     );
-  //   return unsubscribe;
-  // };
 
   useEffect(() => {
     getUserName();
   }, []);
+  console.log(currentLoggedInUser);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -66,10 +50,7 @@ export default function Gallery({ navigation }) {
     });
 
     if (!result.cancelled) {
-      console.log(`RESULT URI: ${result.uri}`);
-      // setImageUrl(result.uri);
       dispatch(setImageUrl(result.uri));
-      console.log(imageUrl);
     }
   };
 
@@ -147,7 +128,7 @@ export default function Gallery({ navigation }) {
   const handlePost = async function () {
     if (!loading) {
       try {
-        const response = await saveImage(imageUrl.imageUrl);
+        const response = await saveImage(imageUrl);
         return response;
       } catch (error) {
         console.log(error.message);
