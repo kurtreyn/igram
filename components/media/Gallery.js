@@ -20,12 +20,16 @@ import * as ImagePicker from 'expo-image-picker';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
-import { setImageUrl, getUserName } from '../../redux/actions/indexActions';
+import {
+  setImageUrl,
+  setCurrentLoggedInUser,
+  setLoading,
+} from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({ navigation }) {
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   // const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [caption, setCaption] = useState('');
   const [progress, setProgress] = useState(null);
@@ -34,12 +38,16 @@ export default function Gallery({ navigation }) {
 
   const currentLoggedInUser = useSelector((state) => state.userReducer);
   const { imageUrl } = useSelector((state) => state.imageUrlReducer);
+  const loading = useSelector((state) => {
+    console.log(state.loadingReducer);
+    state.loadingReducer;
+  });
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUserName();
+    setCurrentLoggedInUser();
   }, []);
-  console.log(currentLoggedInUser);
+  // console.log('current user:', currentLoggedInUser);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,7 +63,8 @@ export default function Gallery({ navigation }) {
   };
 
   const saveImage = async (uri) => {
-    setLoading(true);
+    dispatch(setLoading(true));
+    console.log(loading);
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -122,7 +131,7 @@ export default function Gallery({ navigation }) {
     } catch (error) {
       Alert.alert(error.message);
     }
-    setLoading(false);
+    dispatch(setLoading(false));
   };
 
   const handlePost = async function () {
