@@ -11,10 +11,9 @@ import BottomTabs from '../shared/BottomTabs';
 import { bottomTabIcons } from '../shared/bottomTabIcons';
 
 const HomeScreen = ({ navigation }) => {
-  // POSTS IS AN OBJECT: USING REDUX
-  const { posts } = useSelector((state) => state.postsReducer);
+  const { posts } = useSelector((state) => state.Reducer);
   const dispatch = useDispatch();
-  // const postsMap = posts.posts;
+  // console.log(posts);
 
   useEffect(() => {
     const unsubscribe = db

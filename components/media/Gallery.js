@@ -22,32 +22,32 @@ import { v4 as uuidv4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setImageUrl,
-  setCurrentLoggedInUser,
   setLoading,
+  setCaption,
+  setProgress,
 } from '../../redux/actions/indexActions';
+import { user, uuid } from '../../shared/sharedFunctions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({ navigation }) {
-  // const [loading, setLoading] = useState(false);
-  // const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
-  const [caption, setCaption] = useState('');
-  const [progress, setProgress] = useState(null);
-  const uuid = uuidv4();
-  const user = firebase.auth().currentUser;
+  // const [caption, setCaption] = useState('');
+  // const [progress, setProgress] = useState(null);
+  // const uuid = uuidv4();
+  // const user = firebase.auth().currentUser;
 
-  const currentLoggedInUser = useSelector((state) => state.userReducer);
-  const { imageUrl } = useSelector((state) => state.imageUrlReducer);
-  const loading = useSelector((state) => {
-    console.log(state.loadingReducer);
-    state.loadingReducer;
-  });
+  const { imageUrl } = useSelector((state) => state.Reducer);
+  const { loading } = useSelector((state) => state.Reducer);
+  const { progress } = useSelector((state) => state.Reducer);
+  const { caption } = useSelector((state) => state.Reducer);
   const dispatch = useDispatch();
+  console.log('loading:', loading);
+  console.log('progress:', progress);
+  console.log('caption', caption);
 
-  useEffect(() => {
-    setCurrentLoggedInUser();
-  }, []);
-  // console.log('current user:', currentLoggedInUser);
+  // useEffect(() => {
+  //   setCurrentLoggedInUser();
+  // }, []);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -116,7 +116,7 @@ export default function Gallery({ navigation }) {
         .collection('posts')
         .add({
           imageUrl: img,
-          user: currentLoggedInUser.username,
+          user: user.displayName,
           profile_picture: user.photoURL,
           owner_uid: firebase.auth().currentUser.uid,
           owner_email: firebase.auth().currentUser.email,
@@ -195,7 +195,7 @@ export default function Gallery({ navigation }) {
                   returnKeyType="done"
                   onSubmitEditing={Keyboard.dismiss}
                   multiline={true}
-                  onChange={(e) => setCaption(e.nativeEvent.text)}
+                  onChange={(e) => dispatch(setCaption(e.nativeEvent.text))}
                 />
                 <Divider width={1} orientation="vertical" />
                 {!loading ? (

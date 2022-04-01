@@ -1,16 +1,16 @@
-import { SET_LOADING } from '../constants/indexConstants';
+// import { SET_LOADING } from '../constants/indexConstants';
 
-const initialState = {
-  loading: false,
-};
+// const initialState = {
+//   loading: false,
+// };
 
-const loadingReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case SET_LOADING:
-      return { ...state, loading: action.payload };
-    default:
-      return state;
-  }
-};
+// const loadingReducer = (state = initialState, action) => {
+//   switch (action.type) {
+//     case SET_LOADING:
+//       return { ...state, loading: action.payload };
+//     default:
+//       return state;
+//   }
+// };
 
-export default loadingReducer;
+// export default loadingReducer;
