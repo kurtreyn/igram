@@ -26,58 +26,50 @@ import {
   setCaption,
   setProgress,
 } from '../../redux/actions/indexActions';
-import {
-  saveImage,
-  postImage,
-  downloadURL,
-  dsetprog,
-} from '../../shared/sharedFunctions';
+
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
-export default function Gallery({ navigation }) {
+export default function Gallery({
+  navigation,
+  imageUrl,
+  loading,
+  progress,
+  caption,
+  user,
+  uuid,
+  saveImage,
+  postImage,
+  handlePost,
+  pickImage,
+}) {
   // const [caption, setCaption] = useState('');
   // const [progress, setProgress] = useState(null);
   // const uuid = uuidv4();
   // const user = firebase.auth().currentUser;
 
-  const { imageUrl } = useSelector((state) => state.Reducer);
-  const { loading } = useSelector((state) => state.Reducer);
-  const { progress } = useSelector((state) => state.Reducer);
-  const { caption } = useSelector((state) => state.Reducer);
-  const dispatch = useDispatch();
+  // const { imageUrl } = useSelector((state) => state.Reducer);
+  // const { loading } = useSelector((state) => state.Reducer);
+  // const { progress } = useSelector((state) => state.Reducer);
+  // const { caption } = useSelector((state) => state.Reducer);
+  // const dispatch = useDispatch();
 
-  console.log('loading:', loading);
-  console.log('progress:', progress);
-  console.log('caption', caption);
+  // console.log('loading:', loading);
+  // console.log('progress:', progress);
+  // console.log('caption', caption);
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+  // const pickImage = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //     allowsEditing: true,
+  //     aspect: [1, 1],
+  //     quality: 1,
+  //   });
 
-    if (!result.cancelled) {
-      dispatch(setImageUrl(result.uri));
-    }
-  };
-
-  const handlePost = async function () {
-    dispatch(setLoading(true));
-    if (!loading) {
-      try {
-        await saveImage(imageUrl, caption)
-          .then(dispatch(setLoading(false)))
-          .then(() => navigation.push('HomeScreen'));
-      } catch (error) {
-        console.log(error.message);
-      }
-    } else {
-      Alert.alert('Post in progress');
-    }
-  };
+  //   if (!result.cancelled) {
+  //     dispatch(setImageUrl(result.uri));
+  //   }
+  // };
 
   // const saveImage = async (uri) => {
   //   dispatch(setLoading(true));
@@ -189,7 +181,7 @@ export default function Gallery({ navigation }) {
             {!imageUrl && (
               <Button
                 title="Pick an image from camera roll"
-                onPress={pickImage}
+                onPress={() => pickImage}
               />
             )}
             {imageUrl && (

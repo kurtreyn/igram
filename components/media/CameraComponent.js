@@ -26,16 +26,23 @@ import rotate_icon from '../../assets/rotate-icon.png';
 const cameraIcon = Image.resolveAssetSource(camera_icon).uri;
 const rotateIcon = Image.resolveAssetSource(rotate_icon).uri;
 
-export default function CameraComponent({ navigation }) {
+export default function CameraComponent({
+  navigation,
+  imageUrl,
+  loading,
+  progress,
+  caption,
+  user,
+  uuid,
+  saveImage,
+  postImage,
+  handlePost,
+  dispatch,
+}) {
   const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [camera, setCamera] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [caption, setCaption] = useState('');
-  const [loading, setLoading] = useState(false);
-  const uuid = uuidv4();
-  const user = firebase.auth().currentUser;
 
   useEffect(() => {
     (async () => {
@@ -44,114 +51,10 @@ export default function CameraComponent({ navigation }) {
     })();
   }, []);
 
-  const getUserName = () => {
-    const unsubscribe = db
-      .collection('users')
-      .where('owner_uid', '==', user.uid)
-      .limit(1)
-      .onSnapshot((snapshot) =>
-        snapshot.docs.map((doc) => {
-          setCurrentLoggedInUser({
-            username: doc.data().username,
-            profilePicture: doc.data().profile_picture,
-          });
-        })
-      );
-    return unsubscribe;
-  };
-
-  useEffect(() => {
-    getUserName();
-  }, []);
-
   const takePicture = async () => {
     if (camera) {
       const data = await camera.takePictureAsync(null);
       setImageUrl(data.uri);
-    }
-  };
-
-  const saveImage = async (uri) => {
-    setLoading(true);
-    try {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      let filename = `${uuid}.png`;
-      // let filename = uri.substring(uri.lastIndexOf('/') + 1);
-      const storageRef = firebase
-        .storage()
-        .ref()
-        .child('postImages/' + filename);
-
-      const uploadTask = storageRef.put(blob);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
-
-          switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED:
-              console.log('Upload is paused');
-              break;
-            case firebase.storage.TaskState.RUNNING:
-              console.log('Upload is running');
-              break;
-          }
-        },
-        (error) => {
-          Alert.alert(error.message);
-        },
-        () => {
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log(`downloadURL is: ${downloadURL}`);
-            postImage(downloadURL, caption);
-          });
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      Alert.alert(error.message);
-    }
-  };
-  const postImage = async (img, caption) => {
-    try {
-      const unsubscribe = db
-        .collection('users')
-        .doc(firebase.auth().currentUser.email)
-        .collection('posts')
-        .add({
-          imageUrl: img,
-          user: currentLoggedInUser.username,
-          profile_picture: user.photoURL,
-          owner_uid: firebase.auth().currentUser.uid,
-          owner_email: firebase.auth().currentUser.email,
-          caption: caption,
-          likes_by_users: [],
-          comments: [],
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        })
-        // .then(() => Alert.alert('3 postImage function success'))
-        .then(() => navigation.push('HomeScreen'));
-      return unsubscribe;
-    } catch (error) {
-      Alert.alert(error.message);
-    }
-    setLoading(false);
-  };
-
-  const handlePost = async function () {
-    if (!loading) {
-      try {
-        const response = await saveImage(imageUrl);
-        return response;
-      } catch (error) {
-        console.log(error.message);
-      }
-    } else {
-      Alert.alert('Post in progress');
     }
   };
 
