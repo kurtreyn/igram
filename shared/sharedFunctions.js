@@ -1,38 +1,17 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { firebase, db } from '../firebase';
 import 'firebase/storage';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
-import { connect, useSelector, useDispatch } from 'react-redux';
-import {
-  setImageUrl,
-  setLoading,
-  setCaption,
-  setProgress,
-} from '../redux/actions/indexActions';
 
 export const user = firebase.auth().currentUser;
 export const uuid = uuidv4();
+export let downloadURL = null;
+export let dsetprog = null;
 
-// const mapStateToProps = (state) => {
-//   return {
-//     imageUrl: state.imageUrl,
-//     loading: state.loading,
-//     progress: state.progress,
-//     caption: state.caption,
-//   };
-// };
-
-// const mapDispatchToProps = {
-//   setImageUrl: (imageUrl) => setImageUrl(imageUrl),
-//   setLoading: (loading) => setLoading(loading),
-//   setCaption: (caption) => setCaption(caption),
-//   setProgress: (progress) => setProgress(progress),
-// };
-
-export const saveImage = async (uri) => {
-  dispatch(setLoading(true));
-  console.log(loading);
+export const saveImage = async (uri, caption) => {
+  //   console.log(loading);
   try {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -48,8 +27,8 @@ export const saveImage = async (uri) => {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        setProgress(snapshot.bytesTransferred / snapshot.totalBytes);
-        console.log('Upload is ' + progress + '% done');
+        dsetprog = snapshot.bytesTransferred / snapshot.totalBytes;
+        console.log('Upload is ' + dsetprog + '% done');
 
         switch (snapshot.state) {
           case firebase.storage.TaskState.PAUSED:
@@ -64,8 +43,9 @@ export const saveImage = async (uri) => {
         Alert.alert(error.message);
       },
       () => {
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log(`downloadURL is: ${downloadURL}`);
+        uploadTask.snapshot.ref.getDownloadURL().then((url) => {
+          downloadURL = url;
+          console.log(`downloadURL is: ${url}`);
           postImage(downloadURL, caption);
         });
       }
@@ -92,27 +72,29 @@ export const postImage = async (img, caption) => {
         likes_by_users: [],
         comments: [],
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      })
+      });
 
-      .then(() => navigation.push('HomeScreen'));
+    //   .then(() => navigation.push('HomeScreen'));
     return unsubscribe;
   } catch (error) {
     Alert.alert(error.message);
   }
-  dispatch(setLoading(false));
 };
 
-export const handlePost = async function () {
-  if (!loading) {
-    try {
-      const response = await saveImage(imageUrl);
-      return response;
-    } catch (error) {
-      console.log(error.message);
-    }
-  } else {
-    Alert.alert('Post in progress');
-  }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(sharedFunctions);
+// export const handlePost = async function (
+//   dsetloadtrue,
+//   dsetloadfalse,
+//   dsetprog
+// ) {
+//   if (!dsetloadtrue) {
+//     try {
+//       const response = await saveImage(imageUrl, dsetloadtrue, dsetprog).then(
+//         (response) => postImage(downloadURL, caption, dsetloadfalse)
+//       );
+//     } catch (error) {
+//       console.log(error.message);
+//     }
+//   } else {
+//     Alert.alert('Post in progress');
+//   }
+// };

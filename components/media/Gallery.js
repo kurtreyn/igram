@@ -27,11 +27,10 @@ import {
   setProgress,
 } from '../../redux/actions/indexActions';
 import {
-  user,
-  uuid,
   saveImage,
   postImage,
-  handlePost,
+  downloadURL,
+  dsetprog,
 } from '../../shared/sharedFunctions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
@@ -47,6 +46,7 @@ export default function Gallery({ navigation }) {
   const { progress } = useSelector((state) => state.Reducer);
   const { caption } = useSelector((state) => state.Reducer);
   const dispatch = useDispatch();
+
   console.log('loading:', loading);
   console.log('progress:', progress);
   console.log('caption', caption);
@@ -61,6 +61,21 @@ export default function Gallery({ navigation }) {
 
     if (!result.cancelled) {
       dispatch(setImageUrl(result.uri));
+    }
+  };
+
+  const handlePost = async function () {
+    dispatch(setLoading(true));
+    if (!loading) {
+      try {
+        await saveImage(imageUrl, caption)
+          .then(dispatch(setLoading(false)))
+          .then(() => navigation.push('HomeScreen'));
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      Alert.alert('Post in progress');
     }
   };
 
