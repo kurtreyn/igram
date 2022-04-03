@@ -7,6 +7,7 @@ import LoginScreen from './LoginScreen';
 import SignupScreen from './SignupScreen';
 import CameraComponent from '../components/media/CameraComponent';
 import Gallery from '../components/media/Gallery';
+import GalleryCameraContainer from '../components/media/GalleryCameraContainer';
 import UpdateProfile from './UpdateProfile';
 import BottomTabs from '../shared/BottomTabs';
 const Stack = createStackNavigator();
@@ -31,6 +32,10 @@ export const SignedInStack = () => {
           <Stack.Screen name="Gallery" component={Gallery} />
           <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
           <Stack.Screen name="BottomTabs" component={BottomTabs} />
+          <Stack.Screen
+            name="GalleryCameraContainer"
+            component={GalleryCameraContainer}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

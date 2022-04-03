@@ -32,44 +32,46 @@ const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 export default function Gallery({
   navigation,
-  imageUrl,
+  // imageUrl,
   loading,
   progress,
-  caption,
+  // caption,
   user,
   uuid,
   saveImage,
   postImage,
   handlePost,
-  pickImage,
+  // dispatch,
+  // pickImage,
 }) {
   // const [caption, setCaption] = useState('');
   // const [progress, setProgress] = useState(null);
   // const uuid = uuidv4();
   // const user = firebase.auth().currentUser;
 
-  // const { imageUrl } = useSelector((state) => state.Reducer);
+  const { imageUrl } = useSelector((state) => state.Reducer);
   // const { loading } = useSelector((state) => state.Reducer);
   // const { progress } = useSelector((state) => state.Reducer);
-  // const { caption } = useSelector((state) => state.Reducer);
-  // const dispatch = useDispatch();
+  const { caption } = useSelector((state) => state.Reducer);
+  const dispatch = useDispatch();
 
   // console.log('loading:', loading);
   // console.log('progress:', progress);
   // console.log('caption', caption);
 
-  // const pickImage = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     aspect: [1, 1],
-  //     quality: 1,
-  //   });
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
-  //   if (!result.cancelled) {
-  //     dispatch(setImageUrl(result.uri));
-  //   }
-  // };
+    if (!result.cancelled) {
+      dispatch(setImageUrl(result.uri));
+    }
+  };
+  console.log(imageUrl);
 
   // const saveImage = async (uri) => {
   //   dispatch(setLoading(true));
@@ -181,7 +183,7 @@ export default function Gallery({
             {!imageUrl && (
               <Button
                 title="Pick an image from camera roll"
-                onPress={() => pickImage}
+                onPress={pickImage}
               />
             )}
             {imageUrl && (

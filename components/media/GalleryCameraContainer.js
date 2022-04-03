@@ -39,18 +39,18 @@ export default function GalleryCameraContainer({ navigation }) {
   console.log('progress:', progress);
   console.log('caption', caption);
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+  // const pickImage = async () => {
+  //   let result = await ImagePicker.launchImageLibraryAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //     allowsEditing: true,
+  //     aspect: [1, 1],
+  //     quality: 1,
+  //   });
 
-    if (!result.cancelled) {
-      dispatch(setImageUrl(result.uri));
-    }
-  };
+  //   if (!result.cancelled) {
+  //     dispatch(setImageUrl(result.uri));
+  //   }
+  // };
 
   const saveImage = async (uri) => {
     dispatch(setLoading(true));
@@ -140,17 +140,16 @@ export default function GalleryCameraContainer({ navigation }) {
   return (
     <>
       <Gallery
-        imageUrl={imageUrl}
+        // imageUrl={imageUrl}
         loading={loading}
         progress={progress}
-        caption={caption}
+        // caption={caption}
         user={user}
         uuid={uuid}
         saveImage={saveImage}
         postImage={postImage}
         handlePost={handlePost}
-        dispatch={dispatch}
-        pickImage={pickImage}
+        // dispatch={dispatch}
       />
       <CameraComponent
         imageUrl={imageUrl}
