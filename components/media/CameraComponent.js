@@ -13,36 +13,31 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { firebase, db } from '../../firebase';
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
-// import { user } from '../../shared/sharedFunctions';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  setImageUrl,
+  setLoading,
+  setCaption,
+  setProgress,
+} from '../../redux/actions/indexActions';
+import { user, uuid } from '../../shared/sharedFunctions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
-
 import camera_icon from '../../assets/camera-icon.png';
 import rotate_icon from '../../assets/rotate-icon.png';
 const cameraIcon = Image.resolveAssetSource(camera_icon).uri;
 const rotateIcon = Image.resolveAssetSource(rotate_icon).uri;
 
-export default function CameraComponent({
-  navigation,
-  imageUrl,
-  loading,
-  progress,
-  caption,
-  user,
-  uuid,
-  saveImage,
-  postImage,
-  handlePost,
-  dispatch,
-}) {
-  const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
+export default function CameraComponent({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [camera, setCamera] = useState(null);
+  const { imageUrl } = useSelector((state) => state.Reducer);
+  const { loading } = useSelector((state) => state.Reducer);
+  const { progress } = useSelector((state) => state.Reducer);
+  const { caption } = useSelector((state) => state.Reducer);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -64,6 +59,92 @@ export default function CameraComponent({
   if (hasCameraPermission === false) {
     return <Text>No access to camera</Text>;
   }
+
+  const saveImage = async (uri) => {
+    dispatch(setLoading(true));
+    console.log(loading);
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      let filename = `${uuid}.png`;
+
+      const storageRef = firebase
+        .storage()
+        .ref()
+        .child('postImages/' + filename);
+
+      const uploadTask = storageRef.put(blob);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          setProgress(snapshot.bytesTransferred / snapshot.totalBytes);
+          console.log('Upload is ' + progress + '% done');
+
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED:
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING:
+              console.log('Upload is running');
+              break;
+          }
+        },
+        (error) => {
+          Alert.alert(error.message);
+        },
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log(`downloadURL is: ${downloadURL}`);
+            postImage(downloadURL, caption);
+          });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      Alert.alert(error.message);
+    }
+  };
+
+  const postImage = async (img, caption) => {
+    try {
+      const unsubscribe = db
+        .collection('users')
+        .doc(firebase.auth().currentUser.email)
+        .collection('posts')
+        .add({
+          imageUrl: img,
+          user: user.displayName,
+          profile_picture: user.photoURL,
+          owner_uid: firebase.auth().currentUser.uid,
+          owner_email: firebase.auth().currentUser.email,
+          caption: caption,
+          likes_by_users: [],
+          comments: [],
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+
+        .then(() => navigation.push('HomeScreen'));
+      return unsubscribe;
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+    dispatch(setLoading(false));
+  };
+
+  const handlePost = async function () {
+    if (!loading) {
+      try {
+        const response = await saveImage(imageUrl);
+        return response;
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      Alert.alert('Post in progress');
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

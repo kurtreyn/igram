@@ -38,19 +38,20 @@ export default function GalleryCameraContainer({ navigation }) {
   console.log('loading:', loading);
   console.log('progress:', progress);
   console.log('caption', caption);
+  console.log('user', user);
 
-  // const pickImage = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     aspect: [1, 1],
-  //     quality: 1,
-  //   });
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
-  //   if (!result.cancelled) {
-  //     dispatch(setImageUrl(result.uri));
-  //   }
-  // };
+    if (!result.cancelled) {
+      dispatch(setImageUrl(result.uri));
+    }
+  };
 
   const saveImage = async (uri) => {
     dispatch(setLoading(true));
@@ -139,17 +140,18 @@ export default function GalleryCameraContainer({ navigation }) {
 
   return (
     <>
-      <Gallery
-        // imageUrl={imageUrl}
+      {/* <Gallery
+        imageUrl={imageUrl}
         loading={loading}
         progress={progress}
-        // caption={caption}
+        caption={caption}
         user={user}
         uuid={uuid}
+        pickImage={pickImage}
         saveImage={saveImage}
         postImage={postImage}
         handlePost={handlePost}
-        // dispatch={dispatch}
+        dispatch={dispatch}
       />
       <CameraComponent
         imageUrl={imageUrl}
@@ -162,7 +164,7 @@ export default function GalleryCameraContainer({ navigation }) {
         postImage={postImage}
         handlePost={handlePost}
         dispatch={dispatch}
-      />
+      /> */}
     </>
   );
 }
