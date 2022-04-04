@@ -1,11 +1,9 @@
 import React from 'react';
 import {
-  // Button,
   Image,
   View,
   TouchableOpacity,
   StyleSheet,
-  // Alert,
   Text,
   TextInput,
   Keyboard,

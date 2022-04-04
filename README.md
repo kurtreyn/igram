@@ -2,6 +2,13 @@
 
 ## By: Kurt Reynolds
 
+## UPDATEDS 4.04.22
+
+- updated to v1.3
+  - added Redux to manage majority of state
+  - Refactored code to meet DRY principles
+  - Added back button on CameraView to navigate back to GalleryView
+
 ## UPDATEDS 3.27.22
 
 - updated to v1.2
