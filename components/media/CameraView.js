@@ -13,12 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {
-  // setImageUrl,
-  // setLoading,
-  setCaption,
-  // setProgress,
-} from '../../redux/actions/indexActions';
+import { setCaption } from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
@@ -34,12 +29,9 @@ const CameraView = ({
   loading,
   imageUrl,
   takePicture,
-  // hasCameraPermission,
-  // setHasCameraPermission,
   setType,
   type,
   setCamera,
-  // camera,
   handleView,
   caption,
   dispatch,

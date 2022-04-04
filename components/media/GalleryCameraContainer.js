@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, Alert, Text } from 'react-native';
+import { View, Alert, Text } from 'react-native';
 import { firebase, db } from '../../firebase';
 import 'firebase/storage';
 import { Camera } from 'expo-camera';
@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   setImageUrl,
   setLoading,
-  // setCaption,
   setProgress,
   setView,
 } from '../../redux/actions/indexActions';
@@ -29,11 +28,6 @@ const GalleryCameraContainer = ({ navigation }) => {
   const user = firebase.auth().currentUser;
   const uuid = uuidv4();
   const dispatch = useDispatch();
-
-  // console.log('loading:', loading);
-  // console.log('progress:', progress);
-  // console.log('caption', caption);
-  // console.log('view', view);
 
   useEffect(() => {
     (async () => {
@@ -167,17 +161,10 @@ const GalleryCameraContainer = ({ navigation }) => {
         <GalleryView
           imageUrl={imageUrl}
           loading={loading}
-          progress={progress}
           caption={caption}
-          user={user}
-          uuid={uuid}
           pickImage={pickImage}
-          saveImage={saveImage}
-          postImage={postImage}
           handlePost={handlePost}
-          setProgress={setProgress}
           dispatch={dispatch}
-          view={view}
           handleView={handleView}
           navigation={navigation}
         />
@@ -186,22 +173,12 @@ const GalleryCameraContainer = ({ navigation }) => {
         <CameraView
           imageUrl={imageUrl}
           loading={loading}
-          progress={progress}
           caption={caption}
-          user={user}
-          uuid={uuid}
-          hasCameraPermission={hasCameraPermission}
-          setHasCameraPermission={setHasCameraPermission}
           type={type}
-          setType={setType}
-          camera={camera}
           setCamera={setCamera}
-          saveImage={saveImage}
-          postImage={postImage}
           handlePost={handlePost}
           dispatch={dispatch}
           takePicture={takePicture}
-          view={view}
           handleView={handleView}
         />
       )}

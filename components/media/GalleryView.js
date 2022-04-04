@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   StyleSheet,
-  // Alert,
   Text,
   TextInput,
   Keyboard,
@@ -13,22 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-// import { firebase, db } from '../../firebase';
-import 'firebase/storage';
 import { Divider } from 'react-native-elements';
-// import { Camera } from 'expo-camera';
-// import * as ImagePicker from 'expo-image-picker';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-import 'react-native-get-random-values';
-// import { v4 as uuidv4 } from 'uuid';
-import {
-  // setImageUrl,
-  // setLoading,
-  setCaption,
-  // setProgress,
-  // setView,
-} from '../../redux/actions/indexActions';
+import { setCaption } from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 import CAMERA_ICON from '../../assets/icons-camera-white.png';
 const cameraIcon = Image.resolveAssetSource(CAMERA_ICON).uri;
@@ -43,9 +28,6 @@ const GalleryView = ({
   dispatch,
   handlePost,
   handleView,
-  // user,
-  // progress,
-  // view,
 }) => {
   return (
     <KeyboardAvoidingView
