@@ -58,7 +58,7 @@ const Header = ({ navigation }) => {
               },
               {
                 text: 'Upload Picture from Gallery',
-                onPress: () => navigation.push('Gallery'),
+                onPress: () => navigation.push('GalleryCameraContainer'),
               },
             ])
           }

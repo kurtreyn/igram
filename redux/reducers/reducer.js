@@ -4,6 +4,7 @@ import {
   SET_CAPTION,
   SET_LOADING,
   SET_PROGRESS,
+  SET_VIEW,
 } from '../constants/indexConstants';
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   profilePicture: null,
   caption: '',
   progress: null,
+  view: 'Gallery',
 };
 
 const Reducer = (state = initialState, action) => {
@@ -27,6 +29,8 @@ const Reducer = (state = initialState, action) => {
     case SET_PROGRESS:
       return { ...state, progress: action.payload };
     case SET_CAPTION:
+      return { ...state, caption: action.payload };
+    case SET_VIEW:
       return { ...state, caption: action.payload };
     default:
       return state;

@@ -16,29 +16,55 @@ import {
 import { firebase, db } from '../../firebase';
 import 'firebase/storage';
 import { Divider } from 'react-native-elements';
+import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   setImageUrl,
   setLoading,
   setCaption,
   setProgress,
+  setView,
 } from '../../redux/actions/indexActions';
 import { user, uuid } from '../../shared/sharedFunctions';
-import Gallery from './Gallery';
-import CameraComponent from './CameraComponent';
 
 export default function GalleryCameraContainer({ navigation }) {
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [camera, setCamera] = useState(null);
   const { imageUrl } = useSelector((state) => state.Reducer);
   const { loading } = useSelector((state) => state.Reducer);
   const { progress } = useSelector((state) => state.Reducer);
   const { caption } = useSelector((state) => state.Reducer);
+  const { view } = useSelector((state) => state.Reducer);
   const dispatch = useDispatch();
 
   console.log('loading:', loading);
   console.log('progress:', progress);
   console.log('caption', caption);
   console.log('user', user);
+
+  useEffect(() => {
+    (async () => {
+      const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(cameraStatus.status === 'granted');
+    })();
+  }, []);
+
+  const takePicture = async () => {
+    if (camera) {
+      const data = await camera.takePictureAsync(null);
+      setImageUrl(data.uri);
+    }
+  };
+
+  if (hasCameraPermission === null) {
+    return <View />;
+  }
+  if (hasCameraPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -140,31 +166,303 @@ export default function GalleryCameraContainer({ navigation }) {
 
   return (
     <>
-      {/* <Gallery
-        imageUrl={imageUrl}
-        loading={loading}
-        progress={progress}
-        caption={caption}
-        user={user}
-        uuid={uuid}
-        pickImage={pickImage}
-        saveImage={saveImage}
-        postImage={postImage}
-        handlePost={handlePost}
-        dispatch={dispatch}
-      />
-      <CameraComponent
-        imageUrl={imageUrl}
-        loading={loading}
-        progress={progress}
-        caption={caption}
-        user={user}
-        uuid={uuid}
-        saveImage={saveImage}
-        postImage={postImage}
-        handlePost={handlePost}
-        dispatch={dispatch}
-      /> */}
+      {view === 'Gallery' && (
+        <GalleryView
+          imageUrl={imageUrl}
+          loading={loading}
+          progress={progress}
+          caption={caption}
+          user={user}
+          uuid={uuid}
+          pickImage={pickImage}
+          saveImage={saveImage}
+          postImage={postImage}
+          handlePost={handlePost}
+          dispatch={dispatch}
+        />
+      )}
+      {view === 'Camera' && (
+        <CameraView
+          imageUrl={imageUrl}
+          loading={loading}
+          progress={progress}
+          caption={caption}
+          user={user}
+          uuid={uuid}
+          hasCameraPermission={hasCameraPermission}
+          setHasCameraPermission={setHasCameraPermission}
+          type={type}
+          saveImage={saveImage}
+          postImage={postImage}
+          handlePost={handlePost}
+          dispatch={dispatch}
+          takePicture={takePicture}
+        />
+      )}
     </>
   );
 }
+
+const GalleryView = ({ loading, imageUrl, pickImage }) => {
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.container}>
+          {imageUrl ? null : (
+            <View style={styles.cameraContainer}>
+              <Camera
+                ref={(ref) => setCamera(ref)}
+                style={styles.fixedRatioTag}
+                type={type}
+                ratio={'1:1'}
+              />
+            </View>
+          )}
+
+          {imageUrl && (
+            <View>
+              <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                <Image
+                  source={{ uri: imageUrl }}
+                  style={{
+                    width: 300,
+                    height: 300,
+                  }}
+                />
+              </View>
+              <Divider width={1} orientation="vertical" />
+              <TextInput
+                style={{ color: 'white', fontSize: 20, marginTop: 20 }}
+                placeholder="Add caption to post"
+                placeholderTextColor="gray"
+                returnKeyLabel="Done"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                multiline={true}
+                onChange={(e) => setCaption(e.nativeEvent.text)}
+              />
+              <Divider width={1} orientation="vertical" />
+              {!loading ? (
+                <View>
+                  {caption.length === 0 ? null : (
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handlePost}
+                      disabled={loading}
+                    >
+                      <Text style={styles.text}>Post</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : (
+                <Text style={{ color: '#FFF' }}>
+                  Please wait while your photo posts
+                </Text>
+              )}
+            </View>
+          )}
+          {imageUrl ? null : (
+            <>
+              <TouchableOpacity
+                style={styles.rotateIconContainer}
+                onPress={() => {
+                  setType(
+                    type === Camera.Constants.Type.back
+                      ? Camera.Constants.Type.front
+                      : Camera.Constants.Type.back
+                  );
+                }}
+              >
+                <Image
+                  source={{ uri: rotateIcon }}
+                  style={{ width: 20, height: 20 }}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cameraIconContainer}
+                onPress={() => takePicture()}
+              >
+                <Image
+                  source={{ uri: cameraIcon }}
+                  style={{ width: 60, height: 60 }}
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
+};
+
+const CameraView = ({
+  loading,
+  imageUrl,
+  takePicture,
+  hasCameraPermission,
+  setHasCameraPermission,
+  type,
+}) => {
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <SafeAreaView style={styles.container}>
+          {imageUrl ? null : (
+            <View style={styles.cameraContainer}>
+              <Camera
+                ref={(ref) => setCamera(ref)}
+                style={styles.fixedRatioTag}
+                type={type}
+                ratio={'1:1'}
+              />
+            </View>
+          )}
+
+          {imageUrl && (
+            <View>
+              <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                <Image
+                  source={{ uri: imageUrl }}
+                  style={{
+                    width: 300,
+                    height: 300,
+                  }}
+                />
+              </View>
+              <Divider width={1} orientation="vertical" />
+              <TextInput
+                style={{ color: 'white', fontSize: 20, marginTop: 20 }}
+                placeholder="Add caption to post"
+                placeholderTextColor="gray"
+                returnKeyLabel="Done"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                multiline={true}
+                onChange={(e) => setCaption(e.nativeEvent.text)}
+              />
+              <Divider width={1} orientation="vertical" />
+              {!loading ? (
+                <View>
+                  {caption.length === 0 ? null : (
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handlePost}
+                      disabled={loading}
+                    >
+                      <Text style={styles.text}>Post</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : (
+                <Text style={{ color: '#FFF' }}>
+                  Please wait while your photo posts
+                </Text>
+              )}
+            </View>
+          )}
+          {imageUrl ? null : (
+            <>
+              <TouchableOpacity
+                style={styles.rotateIconContainer}
+                onPress={() => {
+                  setType(
+                    type === Camera.Constants.Type.back
+                      ? Camera.Constants.Type.front
+                      : Camera.Constants.Type.back
+                  );
+                }}
+              >
+                <Image
+                  source={{ uri: rotateIcon }}
+                  style={{ width: 20, height: 20 }}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cameraIconContainer}
+                onPress={() => takePicture()}
+              >
+                <Image
+                  source={{ uri: cameraIcon }}
+                  style={{ width: 60, height: 60 }}
+                />
+              </TouchableOpacity>
+            </>
+          )}
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  headerContainer: {
+    marginHorizontal: 10,
+    marginTop: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  bodyContainer: {
+    flex: 1,
+    marginTop: 50,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: '#405DE6',
+    marginTop: 100,
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+  progressBar: {
+    height: 20,
+    width: '100%',
+    backgroundColor: 'white',
+    borderColor: '#000',
+    borderWidth: 2,
+    borderRadius: 5,
+  },
+  cameraContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  fixedRatioTag: {
+    flex: 1,
+    aspectRatio: 1,
+  },
+  cameraIconContainer: {
+    backgroundColor: '#555',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    width: '18%',
+    borderRadius: 50,
+  },
+  rotateIconContainer: {
+    alignItems: 'flex-end',
+    marginRight: 20,
+    borderColor: '#FFF',
+    borderRadius: 50,
+  },
+});

@@ -5,9 +5,17 @@ import {
   SET_CAPTION,
   SET_LOADING,
   SET_PROGRESS,
+  SET_VIEW,
 } from '../constants/indexConstants';
 export const user = firebase.auth().currentUser;
 // console.log(user);
+
+export const setView = (view) => (dispatch) => {
+  dispatch({
+    type: SET_VIEW,
+    payload: view,
+  });
+};
 
 export const setPosts = (posts) => (dispatch) => {
   dispatch({
