@@ -15,7 +15,7 @@ const initialState = {
   profilePicture: null,
   caption: '',
   progress: null,
-  view: 'Gallery',
+  view: true,
 };
 
 const Reducer = (state = initialState, action) => {
@@ -31,7 +31,7 @@ const Reducer = (state = initialState, action) => {
     case SET_CAPTION:
       return { ...state, caption: action.payload };
     case SET_VIEW:
-      return { ...state, caption: action.payload };
+      return { ...state, view: action.payload };
     default:
       return state;
   }

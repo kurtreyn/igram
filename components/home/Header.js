@@ -7,16 +7,20 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { firebase } from '../../firebase';
 import PLUS_ICON from '../../assets/icon-plus-2-math.png';
 import HEART_ICON from '../../assets/icons8-heart-50.png';
 import MESSANGER_ICON from '../../assets/icon-facebook-messenger.png';
+import { setView } from '../../redux/actions/indexActions';
 
 const plusIcon = Image.resolveAssetSource(PLUS_ICON).uri;
 const heartIcon = Image.resolveAssetSource(HEART_ICON).uri;
 const messangerIcon = Image.resolveAssetSource(MESSANGER_ICON).uri;
 
 const Header = ({ navigation }) => {
+  const { view } = useSelector((state) => state.Reducer);
+  const dispatch = useDispatch();
   const handleSignout = async () => {
     try {
       await firebase.auth().signOut();
@@ -24,6 +28,16 @@ const Header = ({ navigation }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const navToGallery = () => {
+    dispatch(setView(true));
+    navigation.push('GalleryCameraContainer');
+  };
+
+  const navToCamera = () => {
+    dispatch(setView(false));
+    navigation.push('GalleryCameraContainer');
   };
 
   return (
@@ -54,7 +68,7 @@ const Header = ({ navigation }) => {
             Alert.alert('Options', '--', [
               {
                 text: 'Take A Picture',
-                onPress: () => navigation.push('CameraComponent'),
+                onPress: () => navigation.push('GalleryCameraContainer'),
               },
               {
                 text: 'Upload Picture from Gallery',
