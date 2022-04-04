@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-  Button,
+  // Button,
   Image,
   View,
   TouchableOpacity,
   StyleSheet,
-  Alert,
+  // Alert,
   Text,
   TextInput,
   Keyboard,
@@ -13,14 +13,10 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  setImageUrl,
-  setLoading,
-  setCaption,
-  setProgress,
-} from '../../redux/actions/indexActions';
-import { user, uuid } from '../../shared/sharedFunctions';
+import { setCaption } from '../../redux/actions/indexActions';
+import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
+const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
@@ -29,122 +25,18 @@ import rotate_icon from '../../assets/rotate-icon.png';
 const cameraIcon = Image.resolveAssetSource(camera_icon).uri;
 const rotateIcon = Image.resolveAssetSource(rotate_icon).uri;
 
-export default function CameraComponent({ navigation }) {
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [camera, setCamera] = useState(null);
-  const { imageUrl } = useSelector((state) => state.Reducer);
-  const { loading } = useSelector((state) => state.Reducer);
-  const { progress } = useSelector((state) => state.Reducer);
-  const { caption } = useSelector((state) => state.Reducer);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    (async () => {
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === 'granted');
-    })();
-  }, []);
-
-  const takePicture = async () => {
-    if (camera) {
-      const data = await camera.takePictureAsync(null);
-      setImageUrl(data.uri);
-    }
-  };
-
-  if (hasCameraPermission === null) {
-    return <View />;
-  }
-  if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  const saveImage = async (uri) => {
-    dispatch(setLoading(true));
-    console.log(loading);
-    try {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      let filename = `${uuid}.png`;
-
-      const storageRef = firebase
-        .storage()
-        .ref()
-        .child('postImages/' + filename);
-
-      const uploadTask = storageRef.put(blob);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          setProgress(snapshot.bytesTransferred / snapshot.totalBytes);
-          console.log('Upload is ' + progress + '% done');
-
-          switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED:
-              console.log('Upload is paused');
-              break;
-            case firebase.storage.TaskState.RUNNING:
-              console.log('Upload is running');
-              break;
-          }
-        },
-        (error) => {
-          Alert.alert(error.message);
-        },
-        () => {
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log(`downloadURL is: ${downloadURL}`);
-            postImage(downloadURL, caption);
-          });
-        }
-      );
-    } catch (error) {
-      console.log(error);
-      Alert.alert(error.message);
-    }
-  };
-
-  const postImage = async (img, caption) => {
-    try {
-      const unsubscribe = db
-        .collection('users')
-        .doc(firebase.auth().currentUser.email)
-        .collection('posts')
-        .add({
-          imageUrl: img,
-          user: user.displayName,
-          profile_picture: user.photoURL,
-          owner_uid: firebase.auth().currentUser.uid,
-          owner_email: firebase.auth().currentUser.email,
-          caption: caption,
-          likes_by_users: [],
-          comments: [],
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        })
-
-        .then(() => navigation.push('HomeScreen'));
-      return unsubscribe;
-    } catch (error) {
-      Alert.alert(error.message);
-    }
-    dispatch(setLoading(false));
-  };
-
-  const handlePost = async function () {
-    if (!loading) {
-      try {
-        const response = await saveImage(imageUrl);
-        return response;
-      } catch (error) {
-        console.log(error.message);
-      }
-    } else {
-      Alert.alert('Post in progress');
-    }
-  };
-
+const CameraView = ({
+  loading,
+  imageUrl,
+  takePicture,
+  setType,
+  type,
+  setCamera,
+  handleView,
+  caption,
+  dispatch,
+  handlePost,
+}) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -152,6 +44,17 @@ export default function CameraComponent({ navigation }) {
     >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <SafeAreaView style={styles.container}>
+          <TouchableOpacity onPress={handleView}>
+            <View style={{ flexDirection: 'row' }}>
+              <Image
+                source={{
+                  uri: backArrowIcon,
+                }}
+                style={{ width: 30, height: 30, marginTop: 10 }}
+              />
+              <Text style={{ color: '#FFF', marginTop: 15 }}>Back</Text>
+            </View>
+          </TouchableOpacity>
           {imageUrl ? null : (
             <View style={styles.cameraContainer}>
               <Camera
@@ -183,7 +86,7 @@ export default function CameraComponent({ navigation }) {
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
                 multiline={true}
-                onChange={(e) => setCaption(e.nativeEvent.text)}
+                onChange={(e) => dispatch(setCaption(e.nativeEvent.text))}
               />
               <Divider width={1} orientation="vertical" />
               {!loading ? (
@@ -238,7 +141,9 @@ export default function CameraComponent({ navigation }) {
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
-}
+};
+
+export default CameraView;
 
 const styles = StyleSheet.create({
   container: {
@@ -248,6 +153,7 @@ const styles = StyleSheet.create({
   cameraContainer: {
     flex: 1,
     flexDirection: 'row',
+    marginTop: 100,
   },
   fixedRatioTag: {
     flex: 1,

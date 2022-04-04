@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+
+import { StyleSheet, Text, View, Image } from 'react-native';
+
 import AuthNavigation from './AuthNavigation';
 
 export default function App() {
