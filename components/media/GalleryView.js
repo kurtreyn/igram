@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Button,
   Image,
   View,
   TouchableOpacity,
   StyleSheet,
-  Alert,
+  // Alert,
   Text,
   TextInput,
   Keyboard,
@@ -23,11 +23,11 @@ import { Divider } from 'react-native-elements';
 import 'react-native-get-random-values';
 // import { v4 as uuidv4 } from 'uuid';
 import {
-  setImageUrl,
-  setLoading,
+  // setImageUrl,
+  // setLoading,
   setCaption,
-  setProgress,
-  setView,
+  // setProgress,
+  // setView,
 } from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 import CAMERA_ICON from '../../assets/icons-camera-white.png';
@@ -43,9 +43,9 @@ const GalleryView = ({
   dispatch,
   handlePost,
   handleView,
-  user,
-  progress,
-  view,
+  // user,
+  // progress,
+  // view,
 }) => {
   return (
     <KeyboardAvoidingView
@@ -84,8 +84,8 @@ const GalleryView = ({
                     style={{
                       height: 50,
                       width: 50,
-                      marginLeft: 150,
                       marginTop: 20,
+                      alignSelf: 'center',
                     }}
                   />
                 </TouchableOpacity>

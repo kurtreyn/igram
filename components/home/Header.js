@@ -68,11 +68,11 @@ const Header = ({ navigation }) => {
             Alert.alert('Options', '--', [
               {
                 text: 'Take A Picture',
-                onPress: () => navigation.push('GalleryCameraContainer'),
+                onPress: navToCamera,
               },
               {
                 text: 'Upload Picture from Gallery',
-                onPress: () => navigation.push('GalleryCameraContainer'),
+                onPress: navToGallery,
               },
             ])
           }

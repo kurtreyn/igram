@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, StyleSheet, Alert, Text } from 'react-native';
+import { Image, View, Alert, Text } from 'react-native';
 import { firebase, db } from '../../firebase';
 import 'firebase/storage';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
-
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import {
   setImageUrl,
   setLoading,
-  setCaption,
+  // setCaption,
   setProgress,
   setView,
 } from '../../redux/actions/indexActions';
@@ -31,10 +30,10 @@ const GalleryCameraContainer = ({ navigation }) => {
   const uuid = uuidv4();
   const dispatch = useDispatch();
 
-  console.log('loading:', loading);
-  console.log('progress:', progress);
-  console.log('caption', caption);
-  console.log('view', view);
+  // console.log('loading:', loading);
+  // console.log('progress:', progress);
+  // console.log('caption', caption);
+  // console.log('view', view);
 
   useEffect(() => {
     (async () => {
@@ -46,7 +45,7 @@ const GalleryCameraContainer = ({ navigation }) => {
   const takePicture = async () => {
     if (camera) {
       const data = await camera.takePictureAsync(null);
-      setImageUrl(data.uri);
+      dispatch(setImageUrl(data.uri));
     }
   };
 
@@ -142,6 +141,7 @@ const GalleryCameraContainer = ({ navigation }) => {
       Alert.alert(error.message);
     }
     dispatch(setLoading(false));
+    dispatch(setImageUrl(null));
   };
 
   const handlePost = async function () {
@@ -179,6 +179,7 @@ const GalleryCameraContainer = ({ navigation }) => {
           dispatch={dispatch}
           view={view}
           handleView={handleView}
+          navigation={navigation}
         />
       )}
       {!view && (

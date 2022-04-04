@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  Button,
+  // Button,
   Image,
   View,
   TouchableOpacity,
   StyleSheet,
-  Alert,
+  // Alert,
   Text,
   TextInput,
   Keyboard,
@@ -14,11 +14,13 @@ import {
   Platform,
 } from 'react-native';
 import {
-  setImageUrl,
-  setLoading,
+  // setImageUrl,
+  // setLoading,
   setCaption,
-  setProgress,
+  // setProgress,
 } from '../../redux/actions/indexActions';
+import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
+const backArrowIcon = Image.resolveAssetSource(BACK_ARROW_ICON).uri;
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
@@ -32,12 +34,16 @@ const CameraView = ({
   loading,
   imageUrl,
   takePicture,
-  hasCameraPermission,
-  setHasCameraPermission,
+  // hasCameraPermission,
+  // setHasCameraPermission,
+  setType,
   type,
   setCamera,
-  camera,
+  // camera,
   handleView,
+  caption,
+  dispatch,
+  handlePost,
 }) => {
   return (
     <KeyboardAvoidingView
@@ -46,6 +52,17 @@ const CameraView = ({
     >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <SafeAreaView style={styles.container}>
+          <TouchableOpacity onPress={handleView}>
+            <View style={{ flexDirection: 'row' }}>
+              <Image
+                source={{
+                  uri: backArrowIcon,
+                }}
+                style={{ width: 30, height: 30, marginTop: 10 }}
+              />
+              <Text style={{ color: '#FFF', marginTop: 15 }}>Back</Text>
+            </View>
+          </TouchableOpacity>
           {imageUrl ? null : (
             <View style={styles.cameraContainer}>
               <Camera
@@ -77,7 +94,7 @@ const CameraView = ({
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
                 multiline={true}
-                onChange={(e) => setCaption(e.nativeEvent.text)}
+                onChange={(e) => dispatch(setCaption(e.nativeEvent.text))}
               />
               <Divider width={1} orientation="vertical" />
               {!loading ? (
@@ -144,6 +161,7 @@ const styles = StyleSheet.create({
   cameraContainer: {
     flex: 1,
     flexDirection: 'row',
+    marginTop: 100,
   },
   fixedRatioTag: {
     flex: 1,
