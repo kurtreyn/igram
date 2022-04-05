@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import {
+  setCaption,
   setImageUrl,
   setLoading,
   setProgress,
@@ -128,14 +129,17 @@ const GalleryCameraContainer = ({ navigation }) => {
           comments: [],
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         })
-
+        .then(() => {
+          dispatch(setLoading(false));
+          dispatch(setImageUrl(null));
+          dispatch(setCaption(''));
+          dispatch(setView(true));
+        })
         .then(() => navigation.push('HomeScreen'));
       return unsubscribe;
     } catch (error) {
       Alert.alert(error.message);
     }
-    dispatch(setLoading(false));
-    dispatch(setImageUrl(null));
   };
 
   const handlePost = async function () {
@@ -167,6 +171,7 @@ const GalleryCameraContainer = ({ navigation }) => {
           dispatch={dispatch}
           handleView={handleView}
           navigation={navigation}
+          setCaption={setCaption}
         />
       )}
       {!view && (
@@ -180,6 +185,7 @@ const GalleryCameraContainer = ({ navigation }) => {
           dispatch={dispatch}
           takePicture={takePicture}
           handleView={handleView}
+          setCaption={setCaption}
         />
       )}
     </>

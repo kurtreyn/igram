@@ -13,7 +13,6 @@ import {
   Platform,
 } from 'react-native';
 import { Divider } from 'react-native-elements';
-import { setCaption } from '../../redux/actions/indexActions';
 import BACK_ARROW_ICON from '../../assets/icon-back-arrow.png';
 import CAMERA_ICON from '../../assets/icons-camera-white.png';
 const cameraIcon = Image.resolveAssetSource(CAMERA_ICON).uri;
@@ -28,6 +27,7 @@ const GalleryView = ({
   dispatch,
   handlePost,
   handleView,
+  setCaption,
 }) => {
   return (
     <KeyboardAvoidingView
