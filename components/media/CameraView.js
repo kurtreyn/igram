@@ -19,6 +19,8 @@ import { Camera } from 'expo-camera';
 import { Divider } from 'react-native-elements';
 import camera_icon from '../../assets/camera-icon.png';
 import rotate_icon from '../../assets/rotate-icon.png';
+import circle_icon from '../../assets/icons-circle-50.png';
+const circleIcon = Image.resolveAssetSource(circle_icon).uri;
 const cameraIcon = Image.resolveAssetSource(camera_icon).uri;
 const rotateIcon = Image.resolveAssetSource(rotate_icon).uri;
 
@@ -129,8 +131,8 @@ const CameraView = ({
                 onPress={() => takePicture()}
               >
                 <Image
-                  source={{ uri: cameraIcon }}
-                  style={{ width: 60, height: 60 }}
+                  source={{ uri: circleIcon }}
+                  style={{ width: 50, height: 50 }}
                 />
               </TouchableOpacity>
             </>
@@ -158,11 +160,12 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   cameraIconContainer: {
-    backgroundColor: '#555',
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    width: '18%',
+    width: 50,
+    height: 50,
     borderRadius: 50,
   },
   rotateIconContainer: {

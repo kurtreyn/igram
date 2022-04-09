@@ -180,6 +180,7 @@ const GalleryCameraContainer = ({ navigation }) => {
           loading={loading}
           caption={caption}
           type={type}
+          setType={setType}
           setCamera={setCamera}
           handlePost={handlePost}
           dispatch={dispatch}
